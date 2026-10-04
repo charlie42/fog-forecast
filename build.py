@@ -84,7 +84,7 @@ def index_page(template, cities, lang):
 
 
 def main():
-    cities = json.loads((ROOT / 'cities.json').read_text(encoding='utf-8'))
+    cities = sorted(json.loads((ROOT / 'cities.json').read_text(encoding='utf-8')), key=lambda c: c['name'])
     shutil.rmtree(OUT, ignore_errors=True)
     OUT.mkdir()
     for name in STATIC:
