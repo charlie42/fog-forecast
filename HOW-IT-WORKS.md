@@ -11,11 +11,13 @@ The page asks [Open-Meteo](https://open-meteo.com/) for the ICON-EU forecast at 
 - how far the evening air is from saturation (temperature minus dew point)
 - how much it cools overnight
 
-A logistic regression turns those, plus how often the site usually has fog, into a chance. There are four sets of weights: fog and mist, each for a whole morning and for a single hour. Fog means visibility under 1 km and mist under 5 km. A morning counts when that lasts at least two hours between 4 and 10 h.
+A logistic regression turns those, plus how often the site usually has fog, into a chance. There are four sets of weights: fog and mist, each for a whole morning and for a single hour. Fog means visibility under 1 km and mist under 5 km, in air close to saturation: the temperature reported by the airport is within 2 °C of the dew point. Smoke, haze and dry smog are left out that way. A morning counts when that lasts at least two hours between 4 and 10 h.
 
 The weights were fitted once on 14 European airports together. A new place needs its usual fog and mist rates from its own visibility record and no fitting.
 
-Delhi, Lahore and Amritsar are the exception. The European weights rank Delhi's mornings correctly but say a third of the fog that happens, so these three have fog weights of their own, fitted on 13 airports on the plain of the Indus and Ganges. Fog there is tied to the season far more than in Europe (4% of October mornings, 75% in January), so the usual rate that goes in is the one for the calendar month, from the last five years of airport reports. There is no mist number for these three: smog keeps visibility under 5 km on almost every winter morning.
+Delhi, Lahore and Amritsar are the exception. The European weights rank Delhi's mornings correctly but say a third of the fog that happens, so these three have fog weights of their own, fitted on 13 airports on the plain of the Indus and Ganges. Fog there is tied to the season far more than in Europe (Delhi: 3% of October mornings, 73% in January), so the usual rate that goes in is the one for the calendar month, from the last five years of airport reports. There is no mist number for these three: smog keeps visibility under 5 km on almost every winter morning, humid or not.
+
+The humidity condition matters in few places. Of Delhi's 136 mornings with visibility under 1 km in the test, 21 are not counted as fog (13 of them in November), nor are 21 of Lahore's 101 (14 of them in October and November) and 2 of Amritsar's 192. Reports of smoke or haze there are mostly 4 °C or more from saturation. At Fresno and Bakersfield 7 mist mornings each were dry haze. At the other 25 airports checked, the condition changes no fog morning and at most one mist morning, so the weights fitted on visibility alone were kept. Winter fog on the plain of the Indus and Ganges forms in polluted air, so a fog morning there is not a morning of clean air. Only the mornings without the humidity that fog needs are left out.
 
 ## How well it works
 
@@ -69,8 +71,8 @@ Cities added later use the same weights, unchanged, and give only their usual ra
 | Venice | 43% | 34% |
 | Krakow | 43% | 33% |
 | Seattle | 18% | 30% |
-| Fresno | 39% | 26% |
-| Bakersfield | 40% | 22% |
+| Fresno | 38% | 26% |
+| Bakersfield | 39% | 22% |
 | Christchurch | 29% | 21% |
 | Galveston | 25% | 18% |
 | London (Gatwick) | 22% | 17% |
@@ -93,17 +95,17 @@ Tested and left out:
 - Fewer than 15 fog mornings: San Francisco, Boston, Minneapolis, Toronto, Melbourne and Dubai.
 - Islamabad: the formula never says more than about 9% there, and 15 of its 22 fog mornings fell in one month.
 
-Delhi was tested with Delhi left out of the fit, the tested month left out too, and its monthly rates taken from the years before the test (136 fog mornings in 437). Fog skill was 40% (90% range 25 to 53) over its flat winter rate and 20% (7 to 31) over its usual rate for the month, which is the fairer comparison there. By hour it was 36% and 16%. It reads high: it said 39% on average and fog came on 31% of mornings, because the last two winters had less fog than the five before. Mornings given about 60% had fog 44% of the time, and those given about 84% had it 76% of the time. In October it said 12% and fog came on 3%.
+Delhi was tested with Delhi left out of the fit, the tested month left out too, and its monthly rates taken from the years before the test (115 fog mornings in 437). Fog skill was 44% (90% range 24 to 59) over its flat winter rate and 18% (−3 to 34) over its usual rate for the month, which is the fairer comparison there and is not clearly above zero. By hour it was 39% (26 to 50) and 18% (5 to 30). It reads high: it said 34% on average and fog came on 26% of mornings, because the last two winters had less fog than the five before. Mornings given about 60% had fog 50% of the time, and those given about 84% had it 74% of the time. In November it said 36% and fog came on 19%.
 
 Lahore and Amritsar were tested the same way, each left out of the fit:
 
 | | Fog mornings | Over the flat winter rate | Over the rate for the month | Said on average | Fog came on |
 |---|---|---|---|---|---|
-| Delhi | 136 | 40% (25 to 53) | 20% (7 to 31) | 39% | 31% |
-| Lahore | 101 | 36% (25 to 46) | 26% (17 to 33) | 25% | 23% |
-| Amritsar | 192 | 38% (29 to 48) | 19% (12 to 27) | 37% | 47% |
+| Delhi | 115 | 44% (24 to 59) | 18% (−3 to 34) | 34% | 26% |
+| Lahore | 80 | 43% (33 to 54) | 31% (23 to 37) | 22% | 18% |
+| Amritsar | 190 | 36% (26 to 46) | 17% (10 to 26) | 35% | 46% |
 
-Lahore is a little high in the middle (mornings given about 41% had fog 33% of the time) and too low in October (said 2%, fog came on 11%). On 32 of its 101 fog mornings, most of them from October to December, the airport put the visibility under 1 km down as mist or smoke, not fog. Visibility on those mornings was typically around 800 m, against around 150 m on the mornings it called fog. Amritsar reads low: mornings given about 60% had fog 72% of the time.
+Lahore reads a little high: mornings given about 80% had fog 72% of the time, and in February it said 19% and fog came on 8%. Amritsar reads low: mornings given about 60% had fog 72% of the time.
 
 The formula knows fog that forms on calm, clear nights. It does not know fog that drifts in from the sea, which is most of what Los Angeles and the San Francisco coast get.
 

@@ -7,8 +7,9 @@
 //
 // Places on the plain of the Indus and Ganges (Delhi) are the exception. They name the formula "south-asia":
 // fog weights of their own, fitted on airports there, and no mist chance, because smog keeps visibility under
-// 5 km on almost every winter morning. Fog there is so tied to the season (Delhi: 4% of October mornings, 75%
-// in January) that the usual rate fed in is the one for the calendar month.
+// 5 km on almost every winter morning. Fog there is so tied to the season (Delhi: 3% of October mornings, 73%
+// in January) that the usual rate fed in is the one for the calendar month. Their weights and rates count an
+// hour under 1 km as fog only if the air was within 2 C of saturation, which leaves dry smog out.
 
 export const HOURS = [3, 4, 5, 6, 7, 8, 9, 10, 11];
 
@@ -21,8 +22,8 @@ const FOG_HOUR = [0.27946, -0.10117, 0.97268, -1.73308, -0.00587, 0.11295, -0.06
 const FOG = {
   europe: {morning: FOG_MORNING, hour: FOG_HOUR},
   'south-asia': {
-    morning: [0.12067, -0.32208, -0.3242, -0.00138, -0.09378, 0.05731, 0.65743, -9.50688],
-    hour: [0.06083, 0.00562, 0.14542, -0.67152, -0.00033, 0.07905, -0.26457, -0.24953, -0.00056, -0.13943, 0.0316, 0.7491, -11.28393]},
+    morning: [0.11822, -0.32751, -0.34157, -0.0009, -0.16827, 0.0741, 0.65018, -9.04081],
+    hour: [0.00499, 0.04503, -0.22428, -0.51944, -0.00026, 0.07166, -0.29758, -0.32992, -0.00051, -0.21509, 0.06514, 0.70247, -4.90931]},
 };
 
 const sum = values => values.reduce((a, b) => a + b, 0);
