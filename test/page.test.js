@@ -32,11 +32,14 @@ test('draws a row per morning from a saved Munich forecast', () => {
   const {now, hourly} = read('munich-forecast.json');
   const html = forecastHtml(hourly, munich, 'en', Date.parse(now));
   assert.equal(html.split('class="morning"').length - 1, read('munich-expected.json').length);
-  assert.ok(html.startsWith('<div class="morning">Today, Sunday 4 Oct: mist <b>65%</b> · fog <b>60%</b>'));
-  assert.ok(html.includes('fog: 3h 48% · 4h 47%'));
+  assert.ok(html.startsWith('<div class="row"><span></span><small>Mist</small><small>Fog</small></div>'
+    + '<div class="morning"><div class="row"><span>Today, Sunday 4 Oct</span><span class="high">65%</span><span class="high">60%</span></div>'));
+  assert.ok(html.includes('<table class="hours"><tr><th></th><th>3h</th><th>4h</th>'));
+  assert.ok(html.includes('<tr><th>fog</th><td>48%</td><td>47%</td>'));
 
   const german = forecastHtml(hourly, munich, 'de', Date.parse(now));
-  assert.ok(german.startsWith('<div class="morning">Heute, Sonntag, 4. Okt.: Dunst <b>65%</b> · Nebel <b>60%</b>'));
+  assert.ok(german.startsWith('<div class="row"><span></span><small>Dunst</small><small>Nebel</small></div>'
+    + '<div class="morning"><div class="row"><span>Heute, Sonntag, 4. Okt.</span><span class="high">65%</span>'));
   assert.ok(german.includes('<summary><small>nach Stunde</small></summary>'));
   assert.match(german, /<p><small>Stand: <time datetime="2026-10-04T[\d:.]+Z">\d+\. Okt\. 2026, \d\d:\d\d \S+<\/time><\/small><\/p>$/);
   assert.match(html, /<p><small>Updated <time datetime="2026-10-04T[\d:.]+Z">\d+ Oct 2026, \d\d:\d\d \S+<\/time><\/small><\/p>$/);
@@ -46,7 +49,8 @@ test('leaves mist out for a place without a mist rate', () => {
   const delhi = read('../cities.json').find(city => city.name === 'Delhi');
   const {now, hourly} = read('delhi-forecast.json');
   const html = forecastHtml(hourly, delhi, 'en', Date.parse(now));
-  assert.ok(html.startsWith('<div class="morning">Tomorrow, Saturday 10 Jan: fog <b>88%</b>'));
-  assert.ok(html.includes('fog: 3h 77% · 4h 79%'));
+  assert.ok(html.startsWith('<div class="row"><span></span><small>Fog</small></div>'
+    + '<div class="morning"><div class="row"><span>Tomorrow, Saturday 10 Jan</span><span class="high">88%</span></div>'));
+  assert.ok(html.includes('<tr><th>fog</th><td>77%</td><td>79%</td>'));
   assert.ok(!html.includes('mist'));
 });

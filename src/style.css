@@ -1,20 +1,38 @@
+@font-face { font-family: 'PT Serif'; font-weight: 400; font-display: swap; src: url(fonts/pt-serif-400.woff2) format('woff2'); }
+@font-face { font-family: 'PT Serif'; font-weight: 700; font-display: swap; src: url(fonts/pt-serif-700.woff2) format('woff2'); }
+:root { --ink: #222; --muted: #6b7479; --rule: #dcdfe1; --paper: #fff; }
+@media (prefers-color-scheme: dark) { :root { --ink: #e4e6e7; --muted: #99a2a7; --rule: #3a4146; --paper: #1d2124; } }
 body {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 3em;
-  max-width: 44em;
+  max-width: 34em;
   margin: 3em auto;
   padding: 0 1em;
-  font: 20px system-ui;
+  font: 18px/1.5 'PT Serif', Georgia, serif;
+  color: var(--ink);
+  background: var(--paper);
 }
-main { flex: 1 1 16em; }
-h1 { margin: 1em 0; font-size: 1.17em; }
-.morning { margin: 1em 0; }
-nav { margin-top: 1.2em; line-height: 1.6; }
-.cities { margin: 0; padding: 0; list-style: none; line-height: 1.6; }
-article { max-width: 34em; line-height: 1.5; }
-article h2 { margin: 1.5em 0 0; font-size: 1em; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .15em; }
+h1 { margin: 0 0 1.2em; font-size: 1.5em; line-height: 1.25; }
+small { font-size: .85em; color: var(--muted); }
+
+/* A morning: the day, then the chance of mist and of fog in two columns. */
+.row { display: grid; grid-template-columns: minmax(0, 15em) 3.5em 3.5em; font-variant-numeric: tabular-nums; }
+.row > * + * { text-align: right; }
+.row > :last-child { grid-column: 3; }   /* a page without mist keeps its one number in the last column */
+.morning { max-width: 22em; margin: .7em 0; }   /* as wide as the three columns, so the hours end under the last one */
+.low { color: var(--muted); }
+.high { font-weight: bold; }
+summary { width: max-content; cursor: pointer; }
+.hours { width: 100%; table-layout: fixed; margin: .2em 0 .6em; font-size: min(.85em, 3.6vw); color: var(--muted); }   /* smaller on a phone, where ten columns are a tight fit */
+.hours th, .hours td { padding: 0; font-weight: normal; text-align: right; }
+.hours th:first-child { width: 3.6em; text-align: left; }
+
+nav { margin-top: 2em; padding-top: 1em; border-top: 1px solid var(--rule); }
+.cities { margin: 0; padding: 0; list-style: none; line-height: 1.7; }
+nav .cities { columns: 4 7em; font-size: .9em; }
+
+article { line-height: 1.55; }
+article h2 { margin: 1.6em 0 0; font-size: 1em; }
 article h2 + p { margin-top: .3em; }
-table { border-collapse: collapse; }
+table { border-collapse: collapse; font-variant-numeric: tabular-nums; }
 th, td { padding: 0 1.5em .2em 0; text-align: left; vertical-align: top; }
 tbody + tbody tr:first-child td { padding-top: .7em; }   /* a gap between groups of rows */

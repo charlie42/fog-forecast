@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds the site into _site/: a page per city and language, the lists of cities, two pages of text, a sitemap, and the scripts and stylesheet from src/."""
+"""Builds the site into _site/: a page per city and language, the lists of cities, two pages of text, a sitemap, and the scripts, stylesheet and fonts from src/."""
 import json
 import shutil
 from pathlib import Path
@@ -72,18 +72,18 @@ def by_month(city):
 
 
 def city_page(city, cities, lang, forecast):
-    """The list beside the forecast names the cities with a page in this language; `rest` links to the others in English."""
+    """The list under the forecast names the cities with a page in this language; `rest` links to the others in English."""
     root = '../' if lang == 'en' else '../../'
     here = in_language(city, lang)
     addresses = {other: address(city, other) for other in LANGUAGES if in_language(city, other)}
-    nav = [f'<b>{here["name"]}</b>' if c is city else f'<a href="{root}{address(c, lang)}">{in_language(c, lang)["name"]}</a>'
+    nav = [f'<li><b>{here["name"]}</b></li>' if c is city else f'<li><a href="{root}{address(c, lang)}">{in_language(c, lang)["name"]}</a></li>'
            for c in cities if in_language(c, lang)]
     switch = ''.join(f'<br>\n<a href="{root}{to}" lang="{other}" hreflang="{other}">{LANGUAGES[other]}</a>'
                      for other, to in addresses.items() if other != lang)
-    rest = [f'<a href="{root}{address(c, "en")}" lang="en" hreflang="en">{c["name"]}</a>' for c in cities if not in_language(c, lang)]
+    rest = [f'<li><a href="{root}{address(c, "en")}" lang="en" hreflang="en">{c["name"]}</a></li>' for c in cities if not in_language(c, lang)]
     # A place without a usual mist rate has a template of its own, which leaves mist out of the wording.
     return template('city' if 'mist' in city else 'city.fog', lang).substitute(
-        name=here['name'], site=here['site'], nav='<br>\n'.join(nav), rest='<br>\n'.join(rest), switch=switch, forecast=forecast,
+        name=here['name'], site=here['site'], nav='\n'.join(nav), rest='\n'.join(rest), switch=switch, forecast=forecast,
         fog=percent(city['fog']), mist=percent(city.get('mist', 0)), season=SEASON[lang][city['lat'] < 0],
         months=by_month(city) if 'fogByMonth' in city else '',
         place=json.dumps({key: city[key] for key in PLACE_KEYS if key in city}),
@@ -111,6 +111,7 @@ def main():
     OUT.mkdir()
     for name in STATIC:
         shutil.copy(SRC / name, OUT)
+    shutil.copytree(SRC / 'fonts', OUT / 'fonts')   # the typeface and its licence
 
     # The forecast rows come from prerender.js. Without them the pages start empty and fill in once opened.
     made = ROOT / 'forecasts.json'

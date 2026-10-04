@@ -18,9 +18,13 @@ $alternates<link rel="icon" href="$icon">
 <p><small>Dunst = Sichtweite unter 5 km, Nebel = unter 1 km, mindestens zwei Stunden lang zwischen 4 und 10 Uhr. Messort: $site. Dort gibt es von $season an $fog der Morgen Nebel und an $mist Dunst. Wetterdaten von <a href="https://open-meteo.com/">Open-Meteo.com</a>.$switch</small></p>
 </main>
 <nav>
+<ul class="cities">
 $nav
-<p><small>Weitere Städte auf Englisch</small><br>
-$rest</p>
+</ul>
+<p><small>Weitere Städte auf Englisch</small></p>
+<ul class="cities">
+$rest
+</ul>
 </nav>
 <script type="module">
 import {showForecast} from '${root}page.js';

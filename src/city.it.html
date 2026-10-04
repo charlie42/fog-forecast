@@ -18,9 +18,13 @@ $alternates<link rel="icon" href="$icon">
 <p><small>Foschia = visibilità sotto i 5 km, nebbia = sotto 1 km, per almeno due ore tra le 4 e le 10. Punto di misura: $site. Frequenza abituale da $season: nebbia $fog delle mattine, foschia $mist. Dati meteo di <a href="https://open-meteo.com/">Open-Meteo.com</a>.$switch</small></p>
 </main>
 <nav>
+<ul class="cities">
 $nav
-<p><small>Altre città in inglese</small><br>
-$rest</p>
+</ul>
+<p><small>Altre città in inglese</small></p>
+<ul class="cities">
+$rest
+</ul>
 </nav>
 <script type="module">
 import {showForecast} from '${root}page.js';

@@ -37,13 +37,26 @@ export function dayLabel(date, today, lang = 'en') {
 }
 
 // A place without a usual mist rate gets no mist number (Delhi, where smog keeps visibility under 5 km on nearly every morning).
+const kindsOf = morning => ['mist', 'fog'].filter(kind => morning[kind] !== undefined);
+
+// The stylesheet prints a chance under 10% in grey and one from 30% in bold.
+function chanceHtml(p) {
+  const shown = Math.round(100 * p);
+  return `<span${shown < 10 ? ' class="low"' : shown >= 30 ? ' class="high"' : ''}>${shown}%</span>`;
+}
+
+// The line above the rows that says which column is mist and which is fog.
+function headingHtml(morning, lang) {
+  const capital = word => word[0].toUpperCase() + word.slice(1);
+  return `<div class="row"><span></span>${kindsOf(morning).map(kind => `<small>${capital(TEXT[lang][kind])}</small>`).join('')}</div>`;
+}
+
 function morningHtml(morning, today, lang) {
-  const text = TEXT[lang];
-  const kinds = ['mist', 'fog'].filter(kind => morning[kind] !== undefined);
-  const wholeMorning = kinds.map(kind => `${text[kind]} <b>${percent(morning[kind])}</b>`).join(' · ');
-  const byHour = kinds.map(kind => `${text[kind]}: ` + morning.hours.map(x => `${x.hour}h ${percent(x[kind])}`).join(' · ')).join('<br>');
-  return `<div class="morning">${dayLabel(morning.date, today, lang)}: ${wholeMorning}`
-    + `<details><summary><small>${text.byHour}</small></summary><small>${byHour}</small></details></div>`;
+  const text = TEXT[lang], kinds = kindsOf(morning);
+  const hours = `<tr><th></th>${morning.hours.map(x => `<th>${x.hour}h</th>`).join('')}</tr>`
+    + kinds.map(kind => `<tr><th>${text[kind]}</th>${morning.hours.map(x => `<td>${percent(x[kind])}</td>`).join('')}</tr>`).join('');
+  return `<div class="morning"><div class="row"><span>${dayLabel(morning.date, today, lang)}</span>${kinds.map(kind => chanceHtml(morning[kind])).join('')}</div>`
+    + `<details><summary><small>${text.byHour}</small></summary><table class="hours">${hours}</table></details></div>`;
 }
 
 // A note for the months when fog is rare at the place: `rare` holds the first and last of them, e.g. [10, 3] for Auckland.
@@ -71,8 +84,9 @@ export const forecastUrl = place =>
 // The rows for one place, from the "hourly" block of the Open-Meteo answer to `forecastUrl`.
 export function forecastHtml(hourly, place, lang = 'en', now = Date.now()) {
   const today = new Date(now).toLocaleDateString('en-CA', {timeZone: place.tz});
-  const rows = forecastMornings(hourly, place, now).map(m => morningHtml(m, today, lang)).join('');
-  return (rows ? rows + updatedHtml(lang, now) : TEXT[lang].none) + rareNote(place, lang, now);
+  const mornings = forecastMornings(hourly, place, now);
+  const rows = mornings.map(m => morningHtml(m, today, lang)).join('');
+  return (rows ? headingHtml(mornings[0], lang) + rows + updatedHtml(lang, now) : TEXT[lang].none) + rareNote(place, lang, now);
 }
 
 // The page arrives with the rows from when the site was last built (prerender.js). This swaps in fresh ones.
