@@ -54,6 +54,7 @@ Where it is weak:
 | `src/model.js` | the four formulas |
 | `src/page.js` | fetches the forecast and draws it |
 | `src/city.html`, `src/index.html`, `src/style.css` | page templates and styles |
+| `src/how-to-predict-fog.html` | a short article on reading fog from a forecast |
 | `build.py` | writes one page per city into `_site/` |
 | `test/` | checks the model against a saved forecast |
 

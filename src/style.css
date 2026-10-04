@@ -11,4 +11,7 @@ main { flex: 1 1 16em; }
 h1 { margin: 1em 0; font-size: 1.17em; }
 .morning { margin: 1em 0; }
 nav { margin-top: 1.2em; line-height: 1.6; }
-ul { margin: 0; padding: 0; list-style: none; line-height: 1.6; }
+.cities { margin: 0; padding: 0; list-style: none; line-height: 1.6; }
+article { max-width: 34em; line-height: 1.5; }
+article h2 { margin: 1.5em 0 0; font-size: 1em; }
+article h2 + p { margin-top: .3em; }
