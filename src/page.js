@@ -30,11 +30,14 @@ export function dayLabel(date, today, lang = 'en') {
   return (TEXT[lang].days[daysAhead] ?? '') + day;
 }
 
-function morningHtml({date, mist, fog, hours}, today, lang) {
+// A place without a usual mist rate gets no mist number (Delhi, where smog keeps visibility under 5 km on nearly every morning).
+function morningHtml(morning, today, lang) {
   const text = TEXT[lang];
-  const byHour = key => hours.map(x => `${x.hour}h ${percent(x[key])}`).join(' · ');
-  return `<div class="morning">${dayLabel(date, today, lang)}: ${text.mist} <b>${percent(mist)}</b> · ${text.fog} <b>${percent(fog)}</b>`
-    + `<details><summary><small>${text.byHour}</small></summary><small>${text.mist}: ${byHour('mist')}<br>${text.fog}: ${byHour('fog')}</small></details></div>`;
+  const kinds = ['mist', 'fog'].filter(kind => morning[kind] !== undefined);
+  const wholeMorning = kinds.map(kind => `${text[kind]} <b>${percent(morning[kind])}</b>`).join(' · ');
+  const byHour = kinds.map(kind => `${text[kind]}: ` + morning.hours.map(x => `${x.hour}h ${percent(x[kind])}`).join(' · ')).join('<br>');
+  return `<div class="morning">${dayLabel(morning.date, today, lang)}: ${wholeMorning}`
+    + `<details><summary><small>${text.byHour}</small></summary><small>${byHour}</small></details></div>`;
 }
 
 // A note for the months when fog is rare at the place: `rare` holds the first and last of them, e.g. [10, 3] for Auckland.

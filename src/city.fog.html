@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fog forecast $name: chance of fog tomorrow morning, hour by hour</title>
+<meta name="description" content="Chance of fog in $name tomorrow morning and the mornings after, hour by hour from 3 to 11 h, measured against $site.">
+<meta property="og:title" content="Fog forecast $name">
+<meta property="og:description" content="Chance of fog in $name tomorrow morning and the mornings after, hour by hour.">
+<link rel="canonical" href="$url">
+$alternates<link rel="icon" href="$icon">
+<link rel="stylesheet" href="${root}style.css">
+</head>
+<body>
+<main>
+<h1>Fog forecast for $name</h1>
+<div id="forecast">$forecast</div>
+<p><small>Fog = visibility under 1 km for at least two hours between 04 and 10 h. At $site, fog usually turns up on $fog of $season mornings. Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a>.$switch</small></p>
+</main>
+<nav>
+$nav
+</nav>
+<script type="module">
+import {showForecast} from '${root}page.js';
+showForecast($place);
+</script>
+</body>
+</html>

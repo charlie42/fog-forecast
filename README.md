@@ -96,6 +96,7 @@ Fog has a season, and outside it the numbers mean less. At the 21 northern citie
 | `prerender.js` | fetches every city's forecast at build time, so the pages already contain the numbers |
 | `src/city.html`, `src/index.html`, `src/style.css` | page templates and styles |
 | `src/city.de.html`, `src/index.de.html` | the same templates in German |
+| `src/city.fog.html` | the city page for a place without a mist number |
 | `src/how-to-predict-fog.html` | a short article on reading fog from a forecast |
 | `build.py` | writes one page per city and language into `_site/` |
 | `test/` | checks the model against a saved forecast |

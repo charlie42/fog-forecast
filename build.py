@@ -20,7 +20,7 @@ LOADING = {'en': 'loading…', 'de': 'lädt…'}
 AND = {'en': ' and ', 'de': ' und '}
 # The usual rates in cities.json are for the foggier half of the year: north of the equator, then south of it.
 SEASON = {'en': ['October to March', 'April to September'], 'de': ['Oktober bis März', 'April bis September']}
-PLACE_KEYS = ['lat', 'lon', 'tz', 'model', 'rare', 'mist', 'fog', 'mistByHour', 'fogByHour']   # what page.js needs; model and rare only where they differ from the usual
+PLACE_KEYS = ['lat', 'lon', 'tz', 'model', 'formula', 'rare', 'mist', 'fog', 'mistByHour', 'fogByHour']   # what page.js and model.js need; model, formula and rare only where they differ from the usual
 
 
 def percent(share):
@@ -55,7 +55,12 @@ def alternates(addresses):
     return ''.join(f'<link rel="alternate" hreflang="{lang}" href="{SITE_URL}{to}">\n' for lang, to in links)
 
 
-def city_page(template, city, cities, lang, forecast):
+def template(name, lang):
+    """The template of that name in that language: src/city.html for English, src/city.de.html for German."""
+    return Template((SRC / (name + ('' if lang == 'en' else '.' + lang) + '.html')).read_text(encoding='utf-8'))
+
+
+def city_page(city, cities, lang, forecast):
     """The list beside the forecast names the cities with a page in this language; `rest` links to the others in English."""
     root = '../' if lang == 'en' else '../../'
     here = in_language(city, lang)
@@ -65,14 +70,15 @@ def city_page(template, city, cities, lang, forecast):
     switch = ''.join(f'<br>\n<a href="{root}{to}" lang="{other}" hreflang="{other}">{LANGUAGES[other]}</a>'
                      for other, to in addresses.items() if other != lang)
     rest = [f'<a href="{root}{address(c, "en")}" lang="en" hreflang="en">{c["name"]}</a>' for c in cities if not in_language(c, lang)]
-    return template.substitute(
+    # A place without a usual mist rate has a template of its own, which leaves mist out of the wording.
+    return template('city' if 'mist' in city else 'city.fog', lang).substitute(
         name=here['name'], site=here['site'], nav='<br>\n'.join(nav), rest='<br>\n'.join(rest), switch=switch, forecast=forecast,
-        fog=percent(city['fog']), mist=percent(city['mist']), season=SEASON[lang][city['lat'] < 0],
+        fog=percent(city['fog']), mist=percent(city.get('mist', 0)), season=SEASON[lang][city['lat'] < 0],
         place=json.dumps({key: city[key] for key in PLACE_KEYS if key in city}),
         url=SITE_URL + addresses[lang], alternates=alternates(addresses), root=root, icon=ICON)
 
 
-def index_page(template, cities, lang):
+def index_page(cities, lang):
     """`rest` lists the cities without a page in this language, linked to their English one."""
     places = [in_language(c, lang) for c in cities if in_language(c, lang)]
     names = [c['name'] for c in places]
@@ -80,7 +86,7 @@ def index_page(template, cities, lang):
         f'<li><a href="{slug(c)}/">{c["name"]}</a> <small>{c["site"]}</small></li>' for c in places)
     rest = '\n'.join(
         f'<li><a href="../{address(c, "en")}" lang="en" hreflang="en">{c["name"]}</a></li>' for c in cities if not in_language(c, lang))
-    return template.substitute(
+    return template('index', lang).substitute(
         count=len(places), names=', '.join(names), names_and=', '.join(names[:-1]) + AND[lang] + names[-1], rows=rows, rest=rest,
         url=SITE_URL + folder(lang), alternates=alternates({other: folder(other) for other in LANGUAGES}), icon=ICON)
 
@@ -97,25 +103,21 @@ def main():
     forecasts = json.loads(made.read_text(encoding='utf-8')) if made.exists() else {}
     urls = []
     for lang in LANGUAGES:
-        suffix = '.html' if lang == 'en' else f'.{lang}.html'
         having = [c for c in cities if in_language(c, lang)]
         (OUT / folder(lang)).mkdir(exist_ok=True)
-        template = Template((SRC / f'index{suffix}').read_text(encoding='utf-8'))
-        (OUT / folder(lang) / 'index.html').write_text(index_page(template, cities, lang), encoding='utf-8')
+        (OUT / folder(lang) / 'index.html').write_text(index_page(cities, lang), encoding='utf-8')
         urls.append(SITE_URL + folder(lang))
 
-        template = Template((SRC / f'city{suffix}').read_text(encoding='utf-8'))
         for city in having:
             forecast = forecasts.get(city['name'], {}).get(lang, LOADING[lang])
             (OUT / address(city, lang)).mkdir()
-            page = city_page(template, city, cities, lang, forecast)
+            page = city_page(city, cities, lang, forecast)
             (OUT / address(city, lang) / 'index.html').write_text(page, encoding='utf-8')
             urls.append(SITE_URL + address(city, lang))
 
-    template = Template((SRC / f'{ARTICLE}.html').read_text(encoding='utf-8'))
     by_fog = sorted(cities, key=lambda c: c['fog'])
     (OUT / ARTICLE).mkdir()
-    (OUT / ARTICLE / 'index.html').write_text(template.substitute(
+    (OUT / ARTICLE / 'index.html').write_text(template(ARTICLE, 'en').substitute(
         low=percent(by_fog[0]['fog']), lowest=by_fog[0]['name'], high=percent(by_fog[-1]['fog']), highest=by_fog[-1]['name'],
         url=SITE_URL + ARTICLE + '/', icon=ICON), encoding='utf-8')
     urls.append(SITE_URL + ARTICLE + '/')
