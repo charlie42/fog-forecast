@@ -8,7 +8,7 @@ I photograph fog in Berlin and wanted to know the day before how likely it is.
 
 ## How the number is made
 
-The page asks [Open-Meteo](https://open-meteo.com/) for the ICON-EU forecast at one site per city (the worldwide ICON forecast for the US cities, which ICON-EU does not reach) and takes six things from it:
+The page asks [Open-Meteo](https://open-meteo.com/) for the ICON-EU forecast at one site per city (the worldwide ICON forecast for the cities outside Europe, which ICON-EU does not reach) and takes six things from it:
 
 - highest humidity between 4 and 10 h
 - mean wind in those hours
@@ -40,7 +40,7 @@ Calibration with months left out: mornings given about 2, 9, 22, 39, 60 and 76% 
 Where it is weak:
 
 - Ranking mornings, it ties with the fog code in ICON's own output. At the same 1,133 alarms the fog code caught 623 mist mornings and the formula 621. What the formula adds is a percentage.
-- Fog skill differs by city: Prague 35%, Vienna 34%, Milan 31%, down to London 8%, Madrid 3% and Frankfurt 0%. See "Which cities are shown".
+- Fog skill differs by city: Prague 35%, Vienna 34%, Milan 31%, down to London Heathrow 8%, Madrid 3% and Frankfurt 0%. See "Which cities are shown".
 - The page uses the day-ahead weights for mornings up to four days out. Mist skill falls from 28% at one day to 25, 21 and 17% at two, three and four days. Among mornings given 40% or more for mist, mist came on 60% at one day ahead and on 51% at four days.
 - Within a morning, the hourly formula ranks a misty hour above a clear one 69% of the time. The site's usual daily pattern alone manages 65%.
 - An airport is one point, often outside the city. Heathrow has mist on 7% of mornings, Stansted and Luton on 27%.
@@ -48,21 +48,43 @@ Where it is weak:
 
 ## Which cities are shown
 
-A city gets a page only if its fog forecast is clearly better than its usual rate: fog skill of at least 10%, a 90% range (months resampled) that stays above zero, and at least 15 fog mornings in the test to judge by. Of the 14 European airports used for fitting, that leaves out Frankfurt (0%), Madrid (3%), London (8%) and Warsaw (10%, range from -3%).
+A city gets a page only if its fog forecast is clearly better than its usual rate: fog skill of at least 10%, a 90% range (months resampled) that stays above zero, and at least 15 fog mornings in the test to judge by. Of the 14 European airports used for fitting, that leaves out Frankfurt (0%), Madrid (3%), London Heathrow (8%) and Warsaw (10%, range from -3%).
 
-The US cities use the same weights, unchanged, with inputs from the worldwide ICON model. Tested on 14 US airports (6,131 October to March mornings, 349 with fog), skill over each airport's usual rate was 24% for mist and 18% for fog. Five pass the rule above:
+Cities added later use the same weights, unchanged, and give only their usual rates. Outside Europe the inputs come from the worldwide ICON model. Skill over each airport's own usual rate, October to March (April to September for the two New Zealand cities):
 
 | | Mist | Fog |
 |---|---|---|
 | Sacramento | 43% | 36% |
+| Venice | 43% | 34% |
+| Krakow | 43% | 33% |
 | Seattle | 18% | 30% |
 | Fresno | 39% | 26% |
+| Bakersfield | 40% | 22% |
+| Christchurch | 29% | 21% |
+| Galveston | 25% | 18% |
+| London (Gatwick) | 22% | 17% |
+| Auckland | 27% | 14% |
+| Bologna | 30% | 13% |
 | Houston | 20% | 10% |
 | Atlanta | 17% | 10% |
 
-Left out: Los Angeles, New York, Denver, Portland, Chicago and Washington (fog skill not clearly above zero), and San Francisco, Boston and Minneapolis (fewer than 15 fog mornings). The formula knows fog that forms on calm, clear nights. It does not know fog that drifts in from the sea, which is most of what Los Angeles gets.
+Across the 14 US airports first tested (6,131 mornings, 349 with fog) skill was 24% for mist and 18% for fog.
 
-Outside October to March fog is rare and the numbers mean less. At the 15 cities shown, fog came on 1% of April to August mornings (73 of 6,822), against 9% from October to March, and the page says so in those months. In the US the formula had no skill from April to September. In Europe it had almost none from April to July; August and September were about as good as winter, August on few fog mornings.
+Things to know about some of these:
+
+- London is shown at Gatwick, 40 km south of the centre, where the numbers matched what happened. Stansted has the same skill but the formula says half of what happens there.
+- At Galveston and Houston the fog number is less than half of what happens (Galveston: said 4% on average, fog came on 10% of mornings). It still ranks the mornings.
+- Bologna passes narrowly (range 1 to 24%).
+
+Tested and left out:
+
+- Fog skill not clearly above zero, or under 10%: Los Angeles, New York, Denver, Portland, Chicago, Washington, San Diego, Vancouver, Turin, Lahore, Amritsar and London Luton.
+- Fewer than 15 fog mornings: San Francisco, Boston, Minneapolis, Toronto, Melbourne and Dubai.
+- Delhi and Islamabad: smog keeps visibility under 5 km on most mornings (at Delhi on 436 of 437), so the mist number means nothing, and the fog number at Delhi is a third of what happens.
+
+The formula knows fog that forms on calm, clear nights. It does not know fog that drifts in from the sea, which is most of what Los Angeles and the San Francisco coast get.
+
+Fog has a season, and outside it the numbers mean less. At the 21 northern cities fog came on 1% of April to August mornings (101 of 9,509), against 10% from October to March, and the page says so in those months. Auckland is the other way round, with 3 fog mornings in 438 from October to March. Christchurch has fog all year (15% of mornings from April to September, 8% from October to March) and the forecast works in both halves, so its page carries no such note. In the US the formula had no skill from April to September. In Europe it had almost none from April to July; August and September were about as good as winter, August on few fog mornings.
 
 ## What is in the repo
 
