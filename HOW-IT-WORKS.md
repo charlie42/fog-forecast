@@ -33,6 +33,21 @@ Against a harder baseline (usual rate, time of year, and whether yesterday was f
 
 Calibration with months left out: mornings given about 2, 9, 22, 39, 60 and 76% for mist had mist 2, 9, 23, 40, 57 and 76% of the time.
 
+The same for fog, with the number of mornings behind each step:
+
+| Chance given for fog | Mornings | Fog came on |
+|---|---|---|
+| about 1% | 4,276 | 1% |
+| about 9% | 879 | 10% |
+| about 22% | 432 | 20% |
+| about 39% | 356 | 40% |
+| about 58% | 157 | 55% |
+| about 74% | 15 | 67% |
+
+Fog came on 7.5% of all mornings. The mornings given 30% or more (528, or 9% of all) had fog 46% of the time and held 52% of all fog mornings. Those given 50% or more (172) had fog 56% of the time, a little under the 59% they were given on average; the 90% range is 50 to 63%. Those given under 5% (4,276, or 70% of all) had fog 1.1% of the time. For mist the same three figures are 52% (713 of 1,359 mornings given 30% or more), 64% (446 of 697 given 50% or more) and 1.7% (43 of 2,535 given under 5%).
+
+These figures are for the 14 airports the weights were fitted on, with the tested month left out. Four of them (Frankfurt, London Heathrow, Madrid and Warsaw) are not on the site.
+
 Where it is weak:
 
 - Ranking mornings, it ties with the fog code in ICON's own output. At the same 1,133 alarms the fog code caught 623 mist mornings and the formula 621. What the formula adds is a percentage.
