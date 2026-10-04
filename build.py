@@ -119,10 +119,12 @@ def main():
             (OUT / address(city, lang) / 'index.html').write_text(page, encoding='utf-8')
             urls.append(SITE_URL + address(city, lang))
 
-    by_fog = sorted((c for c in cities if 'mist' in c), key=lambda c: c['fog'])   # the article is about places with fog and mist
+    by_fog = sorted((c for c in cities if c['tz'].startswith('Europe/')), key=lambda c: c['fog'])   # the article's numbers are from Europe
+    low = percent(by_fog[0]['fog'])
+    lowest = ' and '.join(c['name'] for c in by_fog if percent(c['fog']) == low)   # Berlin and Amsterdam are level
     (OUT / ARTICLE).mkdir()
     (OUT / ARTICLE / 'index.html').write_text(template(ARTICLE, 'en').substitute(
-        low=percent(by_fog[0]['fog']), lowest=by_fog[0]['name'], high=percent(by_fog[-1]['fog']), highest=by_fog[-1]['name'],
+        low=low, lowest=lowest, high=percent(by_fog[-1]['fog']), highest=by_fog[-1]['name'],
         url=SITE_URL + ARTICLE + '/', icon=ICON), encoding='utf-8')
     urls.append(SITE_URL + ARTICLE + '/')
 
