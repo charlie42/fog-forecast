@@ -9,7 +9,7 @@ ROOT = Path(__file__).parent
 SRC = ROOT / 'src'
 OUT = ROOT / '_site'
 SITE_URL = 'https://charlie42.github.io/fog-forecast/'   # used for canonical links and the sitemap
-STATIC = ['style.css', 'model.js', 'page.js']
+STATIC = ['style.css', 'model.js', 'page.js', 'google7870e9be589df912.html']   # the last one proves ownership to Google Search Console
 ARTICLE = 'how-to-predict-fog'
 ICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%2335434d'/%3E"
         "%3Cpath d='M3 5h10M3 8h10M3 11h6' stroke='%23fff' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")
