@@ -1,0 +1,9 @@
+{
+  "name": "fog-forecast",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "build": "python3 build.py"
+  }
+}

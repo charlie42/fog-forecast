@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fog forecast: chance of fog and mist each morning in $count European cities</title>
+<meta name="description" content="Chance of fog and mist on each of the next mornings, hour by hour, in $names.">
+<meta property="og:title" content="Fog forecast for $count European cities">
+<meta property="og:description" content="Chance of fog and mist on each of the next mornings, hour by hour.">
+<link rel="canonical" href="$url">
+<link rel="icon" href="$icon">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<h1>Fog forecast for $count European cities</h1>
+<p class="lede">The chance of fog and mist on each of the next mornings, hour by hour. Pick a city. They are listed from the foggiest down.</p>
+<table class="cities">
+<colgroup><col><col class="rate"><col class="rate"></colgroup>
+<tr><td></td><th scope="col">Mornings with fog</th><th scope="col">with mist</th></tr>
+$rows
+</table>
+<div class="notes">
+<p>The table shows how often each place has fog (visibility under 1 km) or mist (under 5 km) for at least two hours between 4 and 10 h, October to March, from its own visibility reports. Each city's page starts from that usual rate and moves it up or down with the weather forecast.</p>
+<p>Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a>. How it works and how well: <a href="$repo">source on GitHub</a>.</p>
+</div>
+</main>
+</body>
+</html>
