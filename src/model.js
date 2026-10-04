@@ -20,20 +20,27 @@ const logOdds = p => Math.log(p / (1 - p));
 const chance = (weights, inputs) =>
   1 / (1 + Math.exp(-inputs.reduce((z, value, k) => z + weights[k] * value, weights[inputs.length])));
 
+// The date and hour on the clock at the place, e.g. "2026-10-04T13", whatever the viewer's own time zone.
+function localHour(now, tz) {
+  const parts = new Intl.DateTimeFormat('en-CA', {timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23'}).formatToParts(now);
+  const part = type => parts.find(p => p.type === type).value;
+  return `${part('year')}-${part('month')}-${part('day')}T${part('hour')}`;
+}
+
 /**
  * @param hourly  The "hourly" block of an Open-Meteo forecast in the place's local time, with
  *                relative_humidity_2m, temperature_2m, dew_point_2m, wind_speed_10m, precipitation
  *                and cloud_cover. It has to start the day before the first morning wanted.
- * @param place   Usual rates for the place: {mist, fog, mistByHour, fogByHour}, see cities.json.
- * @param now     Mornings whose noon is before this time are left out.
+ * @param place   Time zone and usual rates for the place: {tz, mist, fog, mistByHour, fogByHour}, see cities.json.
+ * @param now     Mornings are left out once it is noon at the place.
  * @returns       One entry per morning: {date, mist, fog, hours: [{hour, mist, fog}]}, chances from 0 to 1.
  */
 export function forecastMornings(hourly, place, now = Date.now()) {
-  const h = hourly;
+  const h = hourly, hourNow = localHour(now, place.tz);
   return h.time.flatMap((time, midnight) => {
     const hasEvening = midnight >= 6, hasMorning = midnight + 12 <= h.time.length;
     if (!time.endsWith('T00:00') || !hasEvening || !hasMorning) return [];
-    if (new Date(time).getTime() + 12 * 3600e3 < now) return [];
+    if (time.slice(0, 10) + 'T12' <= hourNow) return [];
 
     const morning = key => h[key].slice(midnight + 4, midnight + 10);   // 04 to 09 h
     const evening = key => h[key].slice(midnight - 6, midnight - 3);    // 18 to 20 h the day before

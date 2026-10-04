@@ -19,6 +19,13 @@ test('leaves out mornings that are over', () => {
   assert.deepEqual(forecastMornings(hourly, munich, Date.parse('2026-10-20T00:00:00Z')), []);
 });
 
+test('goes by the clock at the place, not the viewer\'s', () => {
+  const at = Date.parse('2026-10-04T18:00:00Z');   // 20 h in Munich, 11 h in Seattle
+  const firstDate = place => forecastMornings(hourly, place, at)[0].date;
+  assert.equal(firstDate(munich), '2026-10-05');
+  assert.equal(firstDate({...munich, tz: 'America/Los_Angeles'}), '2026-10-04');
+});
+
 test('leaves out a morning with missing weather values', () => {
   const gap = {...hourly, cloud_cover: hourly.cloud_cover.map((value, i) => i === 24 + 6 ? NaN : value)};
   const dates = forecast => forecast.map(m => m.date);
