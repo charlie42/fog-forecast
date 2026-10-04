@@ -12,13 +12,13 @@ const TEXT = {
     locale: 'en-GB', days: ['Today, ', 'Tomorrow, '], mist: 'mist', fog: 'fog', byHour: 'by hour',
     none: 'No forecast right now. Try again in an hour.',
     failed: 'Could not load the forecast. Reload the page to try again.',
-    rare: 'Fog is rare from April to August, about one morning in a hundred across these cities. That is too few for a forecast to pick out, so take these numbers as a rough guide. The fog season starts in September.',
+    rare: (first, last, next) => `Fog is rare from ${first} to ${last}, about one morning in a hundred across these cities. That is too few for a forecast to pick out, so take these numbers as a rough guide. The fog season starts in ${next}.`,
   },
   de: {
     locale: 'de-DE', days: ['Heute, ', 'Morgen, '], mist: 'Dunst', fog: 'Nebel', byHour: 'nach Stunde',
     none: 'Gerade gibt es keine Vorhersage. In einer Stunde noch einmal versuchen.',
     failed: 'Die Vorhersage konnte nicht geladen werden. Seite neu laden, um es noch einmal zu versuchen.',
-    rare: 'Von April bis August ist Nebel selten, in diesen Städten etwa an einem von hundert Morgen. Das ist zu wenig, als dass eine Vorhersage ihn treffen könnte. Die Zahlen sind dann nur ein grober Anhaltspunkt. Die Nebelsaison beginnt im September.',
+    rare: (first, last, next) => `Von ${first} bis ${last} ist Nebel selten, in diesen Städten etwa an einem von hundert Morgen. Das ist zu wenig, als dass eine Vorhersage ihn treffen könnte. Die Zahlen sind dann nur ein grober Anhaltspunkt. Die Nebelsaison beginnt im ${next}.`,
   },
 };
 export const languages = Object.keys(TEXT);
@@ -37,6 +37,17 @@ function morningHtml({date, mist, fog, hours}, today, lang) {
     + `<details><summary><small>${text.byHour}</small></summary><small>${text.mist}: ${byHour('mist')}<br>${text.fog}: ${byHour('fog')}</small></details></div>`;
 }
 
+// A note for the months when fog is rare at the place: `rare` holds the first and last of them, e.g. [10, 3] for Auckland.
+// Without it they are April to August. An empty `rare` means fog all year (Christchurch) and no note.
+function rareNote(place, lang, now) {
+  const [first, last] = place.rare ?? [4, 8];
+  const month = new Date(now).getMonth() + 1;
+  const rareNow = first <= last ? first <= month && month <= last : month >= first || month <= last;
+  if (!first || !rareNow) return '';
+  const name = number => new Date(2000, number - 1).toLocaleDateString(TEXT[lang].locale, {month: 'long'});
+  return `<p><small>${TEXT[lang].rare(name(first), name(last), name(last % 12 + 1))}</small></p>`;
+}
+
 export const forecastUrl = place =>
   `https://api.open-meteo.com/v1/forecast?latitude=${place.lat}&longitude=${place.lon}`
   + `&hourly=${VARIABLES}&models=${place.model ?? 'icon_eu'}&timezone=${place.tz}&past_days=1&forecast_days=4`;
@@ -44,9 +55,8 @@ export const forecastUrl = place =>
 // The rows for one place, from the "hourly" block of the Open-Meteo answer to `forecastUrl`.
 export function forecastHtml(hourly, place, lang = 'en', now = Date.now()) {
   const today = new Date(now).toLocaleDateString('en-CA', {timeZone: place.tz});
-  const month = new Date(now).getMonth(), rareSeason = month > 2 && month < 8;   // April to August
   return (forecastMornings(hourly, place, now).map(m => morningHtml(m, today, lang)).join('') || TEXT[lang].none)
-    + (rareSeason ? `<p><small>${TEXT[lang].rare}</small></p>` : '');
+    + rareNote(place, lang, now);
 }
 
 // The page arrives with the rows from when the site was last built (prerender.js). This swaps in fresh ones.

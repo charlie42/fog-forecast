@@ -1,6 +1,6 @@
 # Fog forecast
 
-Chance of fog and mist on each of the next mornings, hour by hour, for 15 cities in Europe and the United States.
+Chance of fog and mist on each of the next mornings, hour by hour, for 23 cities in Europe, the United States and New Zealand.
 
 Live at https://charlie42.github.io/fog-forecast/
 

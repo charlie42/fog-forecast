@@ -18,7 +18,9 @@ ICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0
 LANGUAGES = {'en': 'English', 'de': 'Deutsch'}
 LOADING = {'en': 'loading…', 'de': 'lädt…'}
 AND = {'en': ' and ', 'de': ' und '}
-PLACE_KEYS = ['lat', 'lon', 'tz', 'model', 'mist', 'fog', 'mistByHour', 'fogByHour']   # what page.js needs; model only where it is not ICON-EU
+# The usual rates in cities.json are for the foggier half of the year: north of the equator, then south of it.
+SEASON = {'en': ['October to March', 'April to September'], 'de': ['Oktober bis März', 'April bis September']}
+PLACE_KEYS = ['lat', 'lon', 'tz', 'model', 'rare', 'mist', 'fog', 'mistByHour', 'fogByHour']   # what page.js needs; model and rare only where they differ from the usual
 
 
 def percent(share):
@@ -65,7 +67,7 @@ def city_page(template, city, cities, lang, forecast):
     rest = [f'<a href="{root}{address(c, "en")}" lang="en" hreflang="en">{c["name"]}</a>' for c in cities if not in_language(c, lang)]
     return template.substitute(
         name=here['name'], site=here['site'], nav='<br>\n'.join(nav), rest='<br>\n'.join(rest), switch=switch, forecast=forecast,
-        fog=percent(city['fog']), mist=percent(city['mist']),
+        fog=percent(city['fog']), mist=percent(city['mist']), season=SEASON[lang][city['lat'] < 0],
         place=json.dumps({key: city[key] for key in PLACE_KEYS if key in city}),
         url=SITE_URL + addresses[lang], alternates=alternates(addresses), root=root, icon=ICON)
 

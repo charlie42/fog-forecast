@@ -13,6 +13,18 @@ test('names today and tomorrow, and only those', () => {
   assert.equal(dayLabel('2026-10-05', '2026-10-04', 'de'), 'Morgen, Montag, 5. Okt.');
 });
 
+test('says when fog is rare, by the place\'s own season', () => {
+  const {hourly} = read('munich-forecast.json');
+  const munich = read('../cities.json').find(city => city.name === 'Munich');
+  const note = (place, date, lang) => forecastHtml(hourly, place, lang, Date.parse(date)).split('<p>')[1] ?? '';
+  assert.match(note(munich, '2026-05-10'), /rare from April to August.*starts in September/);
+  assert.match(note(munich, '2026-05-10', 'de'), /^<small>Von April bis August ist Nebel selten.*beginnt im September/);
+  assert.equal(note(munich, '2026-10-04'), '');
+  assert.match(note({...munich, rare: [10, 3]}, '2026-01-10'), /rare from October to March.*starts in April/);
+  assert.equal(note({...munich, rare: [10, 3]}, '2026-05-10'), '');
+  assert.equal(note({...munich, rare: []}, '2026-05-10'), '');
+});
+
 test('draws a row per morning from a saved Munich forecast', () => {
   const munich = read('../cities.json').find(city => city.name === 'Munich');
   const {now, hourly} = read('munich-forecast.json');
