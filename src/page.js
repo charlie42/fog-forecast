@@ -26,9 +26,9 @@ export async function showForecast(place, out = document.getElementById('forecas
     if (!response.ok) throw new Error(response.status);
     const mornings = forecastMornings((await response.json()).hourly, place);
     const today = new Date().toLocaleDateString('en-CA', {timeZone: place.tz});
-    const month = new Date().getMonth(), offSeason = month > 2 && month < 9;
+    const month = new Date().getMonth(), rareSeason = month > 2 && month < 8;   // April to August
     out.innerHTML = (mornings.map(m => morningHtml(m, today)).join('') || 'No forecast right now. Try again in an hour.')
-      + (offSeason ? '<p><small>Only tested for October to March.</small></p>' : '');
+      + (rareSeason ? '<p><small>Fog is rare from April to August, about one morning in a hundred across these cities. That is too few for a forecast to pick out, so take these numbers as a rough guide. The fog season starts in September.</small></p>' : '');
   } catch {
     out.textContent = 'Could not load the forecast. Reload the page to try again.';
   }

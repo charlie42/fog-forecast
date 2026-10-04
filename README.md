@@ -62,7 +62,7 @@ The US cities use the same weights, unchanged, with inputs from the worldwide IC
 
 Left out: Los Angeles, New York, Denver, Portland, Chicago and Washington (fog skill not clearly above zero), and San Francisco, Boston and Minneapolis (fewer than 15 fog mornings). The formula knows fog that forms on calm, clear nights. It does not know fog that drifts in from the sea, which is most of what Los Angeles gets.
 
-Outside October to March fog is rare and the numbers mean less. In the US the formula had no skill from April to September. In Europe it had almost none from April to July; August and September were about as good as winter, August on few fog mornings.
+Outside October to March fog is rare and the numbers mean less. At the 15 cities shown, fog came on 1% of April to August mornings (73 of 6,822), against 9% from October to March, and the page says so in those months. In the US the formula had no skill from April to September. In Europe it had almost none from April to July; August and September were about as good as winter, August on few fog mornings.
 
 ## What is in the repo
 
