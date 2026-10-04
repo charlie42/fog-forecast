@@ -103,7 +103,7 @@ Lahore and Amritsar were tested the same way, each left out of the fit:
 | Lahore | 101 | 36% (25 to 46) | 26% (17 to 33) | 25% | 23% |
 | Amritsar | 192 | 38% (29 to 48) | 19% (12 to 27) | 37% | 47% |
 
-Lahore is a little high in the middle (mornings given about 41% had fog 33% of the time) and too low in October (said 2%, fog came on 11%). On 32 of its 101 fog mornings the airport's reports of visibility under 1 km did not carry the fog code, which there usually means smoke or haze. Amritsar reads low: mornings given about 60% had fog 72% of the time.
+Lahore is a little high in the middle (mornings given about 41% had fog 33% of the time) and too low in October (said 2%, fog came on 11%). On 32 of its 101 fog mornings, most of them from October to December, the airport put the visibility under 1 km down as mist or smoke, not fog. Visibility on those mornings was typically around 800 m, against around 150 m on the mornings it called fog. Amritsar reads low: mornings given about 60% had fog 72% of the time.
 
 The formula knows fog that forms on calm, clear nights. It does not know fog that drifts in from the sea, which is most of what Los Angeles and the San Francisco coast get.
 
