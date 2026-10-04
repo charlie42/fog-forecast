@@ -17,7 +17,7 @@ test('names today and tomorrow, and only those', () => {
 test('says when fog is rare, by the place\'s own season', () => {
   const {hourly} = read('munich-forecast.json');
   const munich = read('../cities.json').find(city => city.name === 'Munich');
-  const note = (place, date, lang) => forecastHtml(hourly, place, lang, Date.parse(date)).split('<p>')[1] ?? '';
+  const note = (place, date, lang) => forecastHtml(hourly, place, lang, Date.parse(date)).split('<p>')[2] ?? '';   // [1] is the time the rows were made
   assert.match(note(munich, '2026-05-10'), /rare from April to August.*starts in September/);
   assert.match(note(munich, '2026-05-10', 'de'), /^<small>Von April bis August ist Nebel selten.*beginnt im September/);
   assert.match(note(munich, '2026-05-10', 'it'), /^<small>Tra aprile e agosto la nebbia è rara.*comincia a settembre/);
@@ -38,6 +38,8 @@ test('draws a row per morning from a saved Munich forecast', () => {
   const german = forecastHtml(hourly, munich, 'de', Date.parse(now));
   assert.ok(german.startsWith('<div class="morning">Heute, Sonntag, 4. Okt.: Dunst <b>65%</b> · Nebel <b>60%</b>'));
   assert.ok(german.includes('<summary><small>nach Stunde</small></summary>'));
+  assert.match(german, /<p><small>Stand: <time datetime="2026-10-04T[\d:.]+Z">\d+\. Okt\. 2026, \d\d:\d\d \S+<\/time><\/small><\/p>$/);
+  assert.match(html, /<p><small>Updated <time datetime="2026-10-04T[\d:.]+Z">\d+ Oct 2026, \d\d:\d\d \S+<\/time><\/small><\/p>$/);
 });
 
 test('leaves mist out for a place without a mist rate', () => {
