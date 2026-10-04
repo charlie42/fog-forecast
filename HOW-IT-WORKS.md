@@ -48,7 +48,7 @@ The same for fog, with the number of mornings behind each step:
 
 Fog came on 7.5% of all mornings. The mornings given 30% or more (528, or 9% of all) had fog 46% of the time and held 52% of all fog mornings. Those given 50% or more (172) had fog 56% of the time, a little under the 59% they were given on average; the 90% range is 50 to 63%. Those given under 5% (4,276, or 70% of all) had fog 1.1% of the time. For mist the same three figures are 52% (713 of 1,359 mornings given 30% or more), 64% (446 of 697 given 50% or more) and 1.7% (43 of 2,535 given under 5%).
 
-These figures are for the 14 airports the weights were fitted on, with the tested month left out. Five of them are not on the site: Frankfurt, London Heathrow, Madrid and Warsaw, and Stockholm Arlanda, in whose place Stockholm is shown at Bromma.
+These figures are for the 14 airports the weights were fitted on, with the tested month left out. Five of them are not on the site: Frankfurt, London Heathrow, Madrid and Warsaw, and Stockholm Arlanda, since Stockholm is now shown at Bromma.
 
 Where it is weak:
 
@@ -95,7 +95,7 @@ Things to know about some of these:
 Tested and left out:
 
 - Fog skill not clearly above zero, or under 10%: Los Angeles, New York, Denver, Portland, Chicago, Washington, San Diego, Vancouver, Turin and London Luton.
-- Nearer the centre than the airport shown, and not good enough: Houston Hobby (fog skill 7%) and the weather station inside Munich (6%, range from −21%). Fog in the city of Munich is a third as common as at its airport, 24 mornings against 72, and the formula gave 9% on average where fog came on 5.5% of mornings. Paris Orly does as well as Charles de Gaulle and is only 6 km nearer, so Paris was left as it is.
+- Nearer the centre than the airport shown, and not good enough: Houston Hobby (fog skill 7%) and the weather station inside Munich (6%, range from −21%). Fog in the city of Munich is a third as common as at its airport, 24 mornings against 72, and the formula gave 9% on average where fog came on 5.5% of mornings. Fog skill at Paris Orly is the same as at Charles de Gaulle and Orly is only 6 km nearer, so Paris was left as it is.
 - Fewer than 15 fog mornings: San Francisco, Boston, Minneapolis, Toronto, Melbourne and Dubai.
 - Islamabad: the formula never says more than about 9% there, and 15 of its 22 fog mornings fell in one month.
 
