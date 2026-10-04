@@ -62,6 +62,15 @@ def template(name, lang):
     return Template((SRC / (name + ('' if lang == 'en' else '.' + lang) + '.html')).read_text(encoding='utf-8'))
 
 
+def by_month(city):
+    """The usual fog rate for each month from October to March, where it differs too much for one number:
+    '4% of October mornings, 46% in November, ... and 6% in March'."""
+    months = ['October', 'November', 'December', 'January', 'February', 'March']
+    rates = [percent(city['fogByMonth'][i]) for i in (9, 10, 11, 0, 1, 2)]
+    parts = [f'{rates[0]} of {months[0]} mornings'] + [f'{rate} in {month}' for rate, month in zip(rates[1:], months[1:])]
+    return ', '.join(parts[:-1]) + AND['en'] + parts[-1]
+
+
 def city_page(city, cities, lang, forecast):
     """The list beside the forecast names the cities with a page in this language; `rest` links to the others in English."""
     root = '../' if lang == 'en' else '../../'
@@ -76,6 +85,7 @@ def city_page(city, cities, lang, forecast):
     return template('city' if 'mist' in city else 'city.fog', lang).substitute(
         name=here['name'], site=here['site'], nav='<br>\n'.join(nav), rest='<br>\n'.join(rest), switch=switch, forecast=forecast,
         fog=percent(city['fog']), mist=percent(city.get('mist', 0)), season=SEASON[lang][city['lat'] < 0],
+        months=by_month(city) if 'fogByMonth' in city else '',
         place=json.dumps({key: city[key] for key in PLACE_KEYS if key in city}),
         url=SITE_URL + addresses[lang], alternates=alternates(addresses), root=root, icon=ICON)
 
