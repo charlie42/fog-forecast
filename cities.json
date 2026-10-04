@@ -107,7 +107,7 @@
    "fog": 0.227,
    "fogByMonth": [0.581, 0.121, 0.013, 0.003, 0.003, 0.003, 0.003, 0.003, 0.003, 0.003, 0.181, 0.458],
    "fogByHour": [0.128, 0.138, 0.157, 0.216, 0.254, 0.185, 0.144, 0.103, 0.07]},
-  {"name": "Amritsar", "site": "Sri Guru Ram Dass Jee airport", "lat": 31.6333, "lon": 74.8667, "tz": "Asia/Kolkata", "model": "icon_global", "formula": "south-asia", "rare": [4, 9],
+  {"name": "Amritsar", "site": "Sri Guru Ram Dass Jee airport", "lat": 31.7096, "lon": 74.7973, "tz": "Asia/Kolkata", "model": "icon_global", "formula": "south-asia", "rare": [4, 9],
    "fog": 0.444,
    "fogByMonth": [0.715, 0.396, 0.073, 0.014, 0.003, 0.003, 0.003, 0.003, 0.007, 0.13, 0.583, 0.769],
    "fogByHour": [0.294, 0.318, 0.349, 0.377, 0.432, 0.427, 0.343, 0.209, 0.156]}

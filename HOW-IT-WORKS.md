@@ -99,17 +99,17 @@ Tested and left out:
 - Fewer than 15 fog mornings: San Francisco, Boston, Minneapolis, Toronto, Melbourne and Dubai.
 - Islamabad: the formula never says more than about 9% there, and 15 of its 22 fog mornings fell in one month.
 
-Delhi was tested with Delhi left out of the fit, the tested month left out too, and its monthly rates taken from the years before the test (115 fog mornings in 437). Fog skill was 44% (90% range 24 to 59) over its flat winter rate and 18% (−3 to 34) over its usual rate for the month, which is the fairer comparison there and is not clearly above zero. By hour it was 39% (26 to 50) and 18% (5 to 30). It reads high: it said 34% on average and fog came on 26% of mornings, because the last two winters had less fog than the five before. Mornings given about 60% had fog 50% of the time, and those given about 84% had it 74% of the time. In November it said 36% and fog came on 19%.
+Delhi was tested with Delhi left out of the fit, the tested month left out too, and its monthly rates taken from the years before the test (115 fog mornings in 437). Fog skill was 43% (90% range 23 to 59) over its flat winter rate and 18% (−4 to 34) over its usual rate for the month, which is the fairer comparison there and is not clearly above zero. By hour it was 39% (27 to 51) and 18% (5 to 29). It reads high: it said 34% on average and fog came on 26% of mornings, because the last two winters had less fog than the five before. Mornings given about 60% had fog 52% of the time, and those given about 84% had it 73% of the time. In November it said 37% and fog came on 19%.
 
 Lahore and Amritsar were tested the same way, each left out of the fit:
 
 | | Fog mornings | Over the flat winter rate | Over the rate for the month | Said on average | Fog came on |
 |---|---|---|---|---|---|
-| Delhi | 115 | 44% (24 to 59) | 18% (−3 to 34) | 34% | 26% |
-| Lahore | 80 | 43% (33 to 54) | 31% (23 to 37) | 22% | 18% |
-| Amritsar | 190 | 36% (26 to 46) | 17% (10 to 26) | 35% | 46% |
+| Delhi | 115 | 43% (23 to 59) | 18% (−4 to 34) | 34% | 26% |
+| Lahore | 80 | 43% (32 to 54) | 31% (23 to 37) | 22% | 18% |
+| Amritsar | 190 | 40% (31 to 49) | 22% (15 to 30) | 38% | 46% |
 
-Lahore reads a little high: mornings given about 80% had fog 72% of the time, and in February it said 19% and fog came on 8%. Amritsar reads low: mornings given about 60% had fog 72% of the time.
+Lahore reads a little high: mornings given about 80% had fog 74% of the time, and in February it said 19% and fog came on 8%. Amritsar reads low: mornings given about 60% had fog 74% of the time.
 
 The formula knows fog that forms on calm, clear nights. It does not know fog that drifts in from the sea, which is most of what Los Angeles and the San Francisco coast get.
 
