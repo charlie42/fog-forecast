@@ -102,5 +102,13 @@
   {"name": "Delhi", "site": "Indira Gandhi airport", "lat": 28.5667, "lon": 77.1167, "tz": "Asia/Kolkata", "model": "icon_global", "formula": "south-asia", "rare": [4, 10],
    "fog": 0.355,
    "fogByMonth": [0.747, 0.248, 0.058, 0.007, 0.006, 0.007, 0.003, 0.003, 0.003, 0.039, 0.459, 0.578],
-   "fogByHour": [0.169, 0.187, 0.209, 0.228, 0.328, 0.367, 0.296, 0.208, 0.143]}
+   "fogByHour": [0.169, 0.187, 0.209, 0.228, 0.328, 0.367, 0.296, 0.208, 0.143]},
+  {"name": "Lahore", "site": "Allama Iqbal airport", "lat": 31.5216, "lon": 74.4036, "tz": "Asia/Karachi", "model": "icon_global", "formula": "south-asia", "rare": [3, 9],
+   "fog": 0.275,
+   "fogByMonth": [0.594, 0.142, 0.013, 0.003, 0.003, 0.003, 0.003, 0.003, 0.003, 0.051, 0.282, 0.561],
+   "fogByHour": [0.13, 0.142, 0.161, 0.23, 0.294, 0.251, 0.2, 0.136, 0.09]},
+  {"name": "Amritsar", "site": "Sri Guru Ram Dass Jee airport", "lat": 31.6333, "lon": 74.8667, "tz": "Asia/Kolkata", "model": "icon_global", "formula": "south-asia", "rare": [4, 9],
+   "fog": 0.446,
+   "fogByMonth": [0.715, 0.396, 0.073, 0.014, 0.003, 0.003, 0.003, 0.003, 0.007, 0.13, 0.597, 0.769],
+   "fogByHour": [0.3, 0.322, 0.35, 0.377, 0.432, 0.433, 0.373, 0.261, 0.183]}
 ]
