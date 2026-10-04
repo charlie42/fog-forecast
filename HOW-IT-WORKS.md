@@ -21,7 +21,7 @@ The humidity condition matters in few places. Of Delhi's 136 mornings with visib
 
 ## How well it works
 
-Fitted and tested on October to March mornings since January 2024: 6,115 mornings at 14 airports, 1,083 with mist and 460 with fog. Observations are airport METAR reports from the Iowa State archive, plus DWD station data for Berlin Tempelhof. The forecasts are day-ahead ICON-EU runs from Open-Meteo's previous-runs archive.
+Fitted and tested on October to March mornings since January 2024: 6,115 mornings at 14 airports, 1,083 with mist and 460 with fog. Observations are airport METAR reports from the Iowa State archive. Berlin's page takes its usual rates from DWD station data for Tempelhof; in the fit, Berlin is the airport. The forecasts are day-ahead ICON-EU runs from Open-Meteo's previous-runs archive.
 
 Skill below is the Brier skill score against always saying the site's usual rate. 0% is no better than that, 100% is perfect.
 
