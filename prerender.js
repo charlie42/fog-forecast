@@ -1,8 +1,8 @@
-// Writes forecasts.json: for each city, the rows that build.py puts into its page.
+// Writes forecasts.json: for each city, the rows that build.py puts into its page, in every language.
 // Search engines cannot fetch the forecast themselves (Open-Meteo's robots.txt keeps them out),
 // so without this they would see a page with no forecast on it.
 import {readFileSync, writeFileSync} from 'node:fs';
-import {forecastUrl, forecastHtml} from './src/page.js';
+import {forecastUrl, forecastHtml, languages} from './src/page.js';
 
 const cities = JSON.parse(readFileSync(new URL('cities.json', import.meta.url)));
 
@@ -16,6 +16,9 @@ async function hourly(city, retries = 1) {
 }
 
 const rows = {};
-for (const city of cities) rows[city.name] = forecastHtml(await hourly(city), city);
+for (const city of cities) {
+  const forecast = await hourly(city);
+  rows[city.name] = Object.fromEntries(languages.map(lang => [lang, forecastHtml(forecast, city, lang)]));
+}
 writeFileSync(new URL('forecasts.json', import.meta.url), JSON.stringify(rows));
 console.log(`Wrote forecasts for ${cities.length} cities`);

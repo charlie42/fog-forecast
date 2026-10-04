@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nebelvorhersage: Nebel und Dunst morgen früh in $names_and</title>
+<meta name="description" content="Wie wahrscheinlich Nebel und Dunst an den nächsten Morgen sind, Stunde für Stunde, in $names_and.">
+<meta property="og:title" content="Nebelvorhersage für $names_and">
+<meta property="og:description" content="Wie wahrscheinlich Nebel und Dunst an den nächsten Morgen sind, Stunde für Stunde.">
+<link rel="canonical" href="$url">
+$alternates<link rel="icon" href="$icon">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main>
+<h1>Nebelvorhersage für $names_and</h1>
+<ul class="cities">
+$rows
+</ul>
+<p><small>Weitere Städte auf Englisch</small></p>
+<ul class="cities">
+$rest
+</ul>
+<p><small>Dunst = Sichtweite unter 5 km, Nebel = unter 1 km, mindestens zwei Stunden lang zwischen 4 und 10 Uhr. Wetterdaten von <a href="https://open-meteo.com/">Open-Meteo.com</a>.<br>
+<a href="../" lang="en" hreflang="en">English</a></small></p>
+</main>
+</body>
+</html>

@@ -68,16 +68,19 @@ Outside October to March fog is rare and the numbers mean less. At the 15 cities
 
 | | |
 |---|---|
-| `cities.json` | site, coordinates and usual rates for each city |
+| `cities.json` | site, coordinates and usual rates for each city, and its German name where it has a German page |
 | `src/model.js` | the four formulas |
-| `src/page.js` | fetches the forecast and draws it |
+| `src/page.js` | fetches the forecast and draws it, in English or German |
 | `prerender.js` | fetches every city's forecast at build time, so the pages already contain the numbers |
 | `src/city.html`, `src/index.html`, `src/style.css` | page templates and styles |
+| `src/city.de.html`, `src/index.de.html` | the same templates in German |
 | `src/how-to-predict-fog.html` | a short article on reading fog from a forecast |
-| `build.py` | writes one page per city into `_site/` |
+| `build.py` | writes one page per city and language into `_site/` |
 | `test/` | checks the model against a saved forecast |
 
 The analysis that produced the weights is not in this repo.
+
+Berlin, Hamburg, Munich, Vienna and Zurich also have a German page under `de/`. A page in another language needs its words in `src/page.js`, two templates named after it, an entry in `LANGUAGES` in `build.py`, and the translated names in `cities.json`.
 
 ## Running it
 

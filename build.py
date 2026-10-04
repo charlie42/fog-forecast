@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds the site into _site/: a page per city, the list of cities, a sitemap, and the scripts and stylesheet from src/."""
+"""Builds the site into _site/: a page per city and language, the lists of cities, a sitemap, and the scripts and stylesheet from src/."""
 import json
 import shutil
 from pathlib import Path
@@ -13,6 +13,11 @@ STATIC = ['style.css', 'model.js', 'page.js', 'google7870e9be589df912.html']   #
 ARTICLE = 'how-to-predict-fog'
 ICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%2335434d'/%3E"
         "%3Cpath d='M3 5h10M3 8h10M3 11h6' stroke='%23fff' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")
+# English has a page for every city. Another language has one for each city that carries its code in cities.json,
+# plus templates named after it in src/ and its words in page.js.
+LANGUAGES = {'en': 'English', 'de': 'Deutsch'}
+LOADING = {'en': 'loading…', 'de': 'lädt…'}
+AND = {'en': ' and ', 'de': ' und '}
 PLACE_KEYS = ['lat', 'lon', 'tz', 'model', 'mist', 'fog', 'mistByHour', 'fogByHour']   # what page.js needs; model only where it is not ICON-EU
 
 
@@ -21,26 +26,61 @@ def percent(share):
 
 
 def slug(city):
-    return city['name'].lower()
+    return city['name'].lower().translate(str.maketrans({'ä': 'ae', 'ö': 'oe', 'ü': 'ue'}))
 
 
-def city_page(template, city, cities, forecast):
-    nav = '<br>\n'.join(
-        f'<b>{c["name"]}</b>' if c is city else f'<a href="../{slug(c)}/">{c["name"]}</a>'
-        for c in cities)
+def in_language(city, lang):
+    """The city with its name and site in that language, or None where cities.json has no translation."""
+    if lang == 'en':
+        return city
+    return {**city, **city[lang]} if lang in city else None
+
+
+def folder(lang):
+    return '' if lang == 'en' else lang + '/'
+
+
+def address(city, lang):
+    """Where the city's page in that language sits under the site root, e.g. 'de/muenchen/'."""
+    return folder(lang) + slug(in_language(city, lang)) + '/'
+
+
+def alternates(addresses):
+    """The lines that tell search engines which pages are translations of each other. `addresses` maps language to address."""
+    if len(addresses) < 2:
+        return ''
+    links = [*addresses.items(), ('x-default', addresses['en'])]
+    return ''.join(f'<link rel="alternate" hreflang="{lang}" href="{SITE_URL}{to}">\n' for lang, to in links)
+
+
+def city_page(template, city, cities, lang, forecast):
+    """The list beside the forecast names the cities with a page in this language; `rest` links to the others in English."""
+    root = '../' if lang == 'en' else '../../'
+    here = in_language(city, lang)
+    addresses = {other: address(city, other) for other in LANGUAGES if in_language(city, other)}
+    nav = [f'<b>{here["name"]}</b>' if c is city else f'<a href="{root}{address(c, lang)}">{in_language(c, lang)["name"]}</a>'
+           for c in cities if in_language(c, lang)]
+    switch = ''.join(f'<br>\n<a href="{root}{to}" lang="{other}" hreflang="{other}">{LANGUAGES[other]}</a>'
+                     for other, to in addresses.items() if other != lang)
+    rest = [f'<a href="{root}{address(c, "en")}" lang="en" hreflang="en">{c["name"]}</a>' for c in cities if not in_language(c, lang)]
     return template.substitute(
-        name=city['name'], site=city['site'], nav=nav, forecast=forecast,
+        name=here['name'], site=here['site'], nav='<br>\n'.join(nav), rest='<br>\n'.join(rest), switch=switch, forecast=forecast,
         fog=percent(city['fog']), mist=percent(city['mist']),
         place=json.dumps({key: city[key] for key in PLACE_KEYS if key in city}),
-        url=SITE_URL + slug(city) + '/', icon=ICON)
+        url=SITE_URL + addresses[lang], alternates=alternates(addresses), root=root, icon=ICON)
 
 
-def index_page(template, cities):
+def index_page(template, cities, lang):
+    """`rest` lists the cities without a page in this language, linked to their English one."""
+    places = [in_language(c, lang) for c in cities if in_language(c, lang)]
+    names = [c['name'] for c in places]
     rows = '\n'.join(
-        f'<li><a href="{slug(c)}/">{c["name"]}</a> <small>{c["site"]}</small></li>' for c in cities)
+        f'<li><a href="{slug(c)}/">{c["name"]}</a> <small>{c["site"]}</small></li>' for c in places)
+    rest = '\n'.join(
+        f'<li><a href="../{address(c, "en")}" lang="en" hreflang="en">{c["name"]}</a></li>' for c in cities if not in_language(c, lang))
     return template.substitute(
-        count=len(cities), names=', '.join(c['name'] for c in cities), rows=rows,
-        url=SITE_URL, icon=ICON)
+        count=len(places), names=', '.join(names), names_and=', '.join(names[:-1]) + AND[lang] + names[-1], rows=rows, rest=rest,
+        url=SITE_URL + folder(lang), alternates=alternates({other: folder(other) for other in LANGUAGES}), icon=ICON)
 
 
 def main():
@@ -53,14 +93,22 @@ def main():
     # The forecast rows come from prerender.js. Without them the pages start empty and fill in once opened.
     made = ROOT / 'forecasts.json'
     forecasts = json.loads(made.read_text(encoding='utf-8')) if made.exists() else {}
-    template = Template((SRC / 'city.html').read_text(encoding='utf-8'))
-    for city in cities:
-        (OUT / slug(city)).mkdir()
-        page = city_page(template, city, cities, forecasts.get(city['name'], 'loading…'))
-        (OUT / slug(city) / 'index.html').write_text(page, encoding='utf-8')
+    urls = []
+    for lang in LANGUAGES:
+        suffix = '.html' if lang == 'en' else f'.{lang}.html'
+        having = [c for c in cities if in_language(c, lang)]
+        (OUT / folder(lang)).mkdir(exist_ok=True)
+        template = Template((SRC / f'index{suffix}').read_text(encoding='utf-8'))
+        (OUT / folder(lang) / 'index.html').write_text(index_page(template, cities, lang), encoding='utf-8')
+        urls.append(SITE_URL + folder(lang))
 
-    template = Template((SRC / 'index.html').read_text(encoding='utf-8'))
-    (OUT / 'index.html').write_text(index_page(template, cities), encoding='utf-8')
+        template = Template((SRC / f'city{suffix}').read_text(encoding='utf-8'))
+        for city in having:
+            forecast = forecasts.get(city['name'], {}).get(lang, LOADING[lang])
+            (OUT / address(city, lang)).mkdir()
+            page = city_page(template, city, cities, lang, forecast)
+            (OUT / address(city, lang) / 'index.html').write_text(page, encoding='utf-8')
+            urls.append(SITE_URL + address(city, lang))
 
     template = Template((SRC / f'{ARTICLE}.html').read_text(encoding='utf-8'))
     by_fog = sorted(cities, key=lambda c: c['fog'])
@@ -68,8 +116,8 @@ def main():
     (OUT / ARTICLE / 'index.html').write_text(template.substitute(
         low=percent(by_fog[0]['fog']), lowest=by_fog[0]['name'], high=percent(by_fog[-1]['fog']), highest=by_fog[-1]['name'],
         url=SITE_URL + ARTICLE + '/', icon=ICON), encoding='utf-8')
+    urls.append(SITE_URL + ARTICLE + '/')
 
-    urls = [SITE_URL] + [SITE_URL + slug(c) + '/' for c in cities] + [SITE_URL + ARTICLE + '/']
     (OUT / 'sitemap.xml').write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + ''.join(f'<url><loc>{url}</loc></url>\n' for url in urls) + '</urlset>\n', encoding='utf-8')

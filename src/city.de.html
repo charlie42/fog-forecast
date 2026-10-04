@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nebelvorhersage $name: Nebel morgen früh, Stunde für Stunde</title>
+<meta name="description" content="Wie wahrscheinlich Nebel und Dunst in $name morgen früh und an den Morgen danach sind, Stunde für Stunde von 3 bis 11 Uhr. Messort: $site.">
+<meta property="og:title" content="Nebelvorhersage $name">
+<meta property="og:description" content="Wie wahrscheinlich Nebel und Dunst in $name morgen früh und an den Morgen danach sind, Stunde für Stunde.">
+<link rel="canonical" href="$url">
+$alternates<link rel="icon" href="$icon">
+<link rel="stylesheet" href="${root}style.css">
+</head>
+<body>
+<main>
+<h1>Nebelvorhersage für $name</h1>
+<div id="forecast">$forecast</div>
+<p><small>Dunst = Sichtweite unter 5 km, Nebel = unter 1 km, mindestens zwei Stunden lang zwischen 4 und 10 Uhr. Messort: $site. Dort gibt es von Oktober bis März an $fog der Morgen Nebel und an $mist Dunst. Wetterdaten von <a href="https://open-meteo.com/">Open-Meteo.com</a>.$switch</small></p>
+</main>
+<nav>
+$nav
+<p><small>Weitere Städte auf Englisch</small><br>
+$rest</p>
+</nav>
+<script type="module">
+import {showForecast} from '${root}page.js';
+showForecast($place, 'de');
+</script>
+</body>
+</html>
