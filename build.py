@@ -22,7 +22,7 @@ AND = {'en': ' and ', 'de': ' und ', 'it': ' e '}
 # The usual rates in cities.json are for the foggier half of the year: north of the equator, then south of it.
 SEASON = {'en': ['October to March', 'April to September'], 'de': ['Oktober bis März', 'April bis September'],
           'it': ['ottobre a marzo', 'aprile a settembre']}
-PLACE_KEYS = ['lat', 'lon', 'tz', 'model', 'formula', 'rare', 'mist', 'fog', 'mistByHour', 'fogByMonth', 'fogByHour']   # what page.js and model.js need; model, formula and rare only where they differ from the usual
+PLACE_KEYS = ['lat', 'lon', 'tz', 'model', 'formula', 'rare', 'mist', 'fog', 'mistShift', 'fogShift', 'mistByHour', 'fogByMonth', 'fogByHour']   # what page.js and model.js need; model, formula and rare only where they differ from the usual
 
 
 def percent(share):

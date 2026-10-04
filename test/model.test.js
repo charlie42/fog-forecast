@@ -15,6 +15,17 @@ test('gives the reference chances for a saved Munich forecast', () => {
   assert.deepEqual(mornings, read('munich-expected.json'));
 });
 
+test('adds the correction of the place to the log-odds of every chance', () => {
+  const {mistShift, fogShift, ...uncorrected} = munich;
+  const logOdds = p => Math.log(p / (1 - p));
+  const all = place => forecastMornings(hourly, place, Date.parse(now)).flatMap(m => [m, ...m.hours]);
+  const before = all(uncorrected);
+  all(munich).forEach((after, i) => {
+    assert.ok(Math.abs(logOdds(after.mist) - logOdds(before[i].mist) - mistShift) < 1e-9);
+    assert.ok(Math.abs(logOdds(after.fog) - logOdds(before[i].fog) - fogShift) < 1e-9);
+  });
+});
+
 test('leaves out mornings that are over', () => {
   assert.deepEqual(forecastMornings(hourly, munich, Date.parse('2026-10-20T00:00:00Z')), []);
 });

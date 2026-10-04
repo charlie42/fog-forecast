@@ -30,8 +30,8 @@ const sum = values => values.reduce((a, b) => a + b, 0);
 const mean = values => sum(values) / values.length;
 const logOdds = p => Math.log(p / (1 - p));
 const clamp = (value, low, high) => Math.min(Math.max(value, low), high);
-const chance = (weights, inputs) =>
-  1 / (1 + Math.exp(-inputs.reduce((z, value, k) => z + weights[k] * value, weights[inputs.length])));
+const chance = (weights, inputs, shift = 0) =>
+  1 / (1 + Math.exp(-inputs.reduce((z, value, k) => z + weights[k] * value, weights[inputs.length] + shift)));
 
 // The date and hour on the clock at the place, e.g. "2026-10-04T13", whatever the viewer's own time zone.
 function localHour(now, tz) {
@@ -48,6 +48,9 @@ function localHour(now, tz) {
  *                Without `mist` there is no mist chance. With `fogByMonth` (January to December) the usual fog rate
  *                is the month's, and the hourly rates in `fogByHour` are scaled by how the month compares with `fog`.
  *                `formula` names the fog weights, "europe" if left out.
+ *                `mistShift` and `fogShift`, where given, are added to the log-odds of the morning chance and of
+ *                each hour's chance. They are half of the constant that would make the average chance at the
+ *                place over its past mornings equal to how often mist or fog came.
  * @param now     Mornings are left out once it is noon at the place.
  * @returns       One entry per morning: {date, mist, fog, hours: [{hour, mist, fog}]}, chances from 0 to 1;
  *                no `mist` for a place without mist rates.
@@ -55,6 +58,7 @@ function localHour(now, tz) {
 export function forecastMornings(hourly, place, now = Date.now()) {
   const h = hourly, hourNow = localHour(now, place.tz);
   const weights = FOG[place.formula ?? 'europe'], hasMist = place.mist !== undefined;
+  const mistShift = place.mistShift ?? 0, fogShift = place.fogShift ?? 0;
   return h.time.flatMap((time, midnight) => {
     const hasEvening = midnight >= 6, hasMorning = midnight + 12 <= h.time.length;
     if (!time.endsWith('T00:00') || !hasEvening || !hasMorning) return [];
@@ -85,13 +89,13 @@ export function forecastMornings(hourly, place, now = Date.now()) {
         h.temperature_2m[i] - h.dew_point_2m[i],
         Math.log1p(sum(h.precipitation.slice(i - 2, i + 1))),   // rain in the last three hours
         h.cloud_cover[i]];
-      const fog = chance(weights.hour, [...hourInputs, ...morningInputs, fogUsualAt(k)]);
-      return hasMist ? {hour, mist: chance(MIST_HOUR, [...hourInputs, ...morningInputs, logOdds(place.mistByHour[k])]), fog} : {hour, fog};
+      const fog = chance(weights.hour, [...hourInputs, ...morningInputs, fogUsualAt(k)], fogShift);
+      return hasMist ? {hour, mist: chance(MIST_HOUR, [...hourInputs, ...morningInputs, logOdds(place.mistByHour[k])], mistShift), fog} : {hour, fog};
     });
 
     const incomplete = [...morningInputs, ...hours.map(x => x.fog), ...hours.map(x => x.mist ?? 0)].some(Number.isNaN);
-    const fog = chance(weights.morning, [...morningInputs, fogUsual]);
-    const morningChances = hasMist ? {mist: chance(MIST_MORNING, [...morningInputs, logOdds(place.mist)]), fog} : {fog};
+    const fog = chance(weights.morning, [...morningInputs, fogUsual], fogShift);
+    const morningChances = hasMist ? {mist: chance(MIST_MORNING, [...morningInputs, logOdds(place.mist)], mistShift), fog} : {fog};
     return incomplete ? [] : [{date: time.slice(0, 10), hours, ...morningChances}];
   });
 }
