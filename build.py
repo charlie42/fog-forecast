@@ -24,12 +24,12 @@ def slug(city):
     return city['name'].lower()
 
 
-def city_page(template, city, cities):
+def city_page(template, city, cities, forecast):
     nav = '<br>\n'.join(
         f'<b>{c["name"]}</b>' if c is city else f'<a href="../{slug(c)}/">{c["name"]}</a>'
         for c in cities)
     return template.substitute(
-        name=city['name'], site=city['site'], nav=nav,
+        name=city['name'], site=city['site'], nav=nav, forecast=forecast,
         fog=percent(city['fog']), mist=percent(city['mist']),
         place=json.dumps({key: city[key] for key in PLACE_KEYS if key in city}),
         url=SITE_URL + slug(city) + '/', icon=ICON)
@@ -50,10 +50,14 @@ def main():
     for name in STATIC:
         shutil.copy(SRC / name, OUT)
 
+    # The forecast rows come from prerender.js. Without them the pages start empty and fill in once opened.
+    made = ROOT / 'forecasts.json'
+    forecasts = json.loads(made.read_text(encoding='utf-8')) if made.exists() else {}
     template = Template((SRC / 'city.html').read_text(encoding='utf-8'))
     for city in cities:
         (OUT / slug(city)).mkdir()
-        (OUT / slug(city) / 'index.html').write_text(city_page(template, city, cities), encoding='utf-8')
+        page = city_page(template, city, cities, forecasts.get(city['name'], 'loading…'))
+        (OUT / slug(city) / 'index.html').write_text(page, encoding='utf-8')
 
     template = Template((SRC / 'index.html').read_text(encoding='utf-8'))
     (OUT / 'index.html').write_text(index_page(template, cities), encoding='utf-8')

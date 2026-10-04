@@ -3,6 +3,8 @@ name: Test, build and deploy
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: '17 */3 * * *'   # the pages carry the forecast from build time, so rebuild as new model runs come in
   workflow_dispatch:
 
 permissions:
@@ -23,6 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - run: node --test
+      - run: node prerender.js
       - run: python3 build.py
       - uses: actions/upload-pages-artifact@v5
         with:

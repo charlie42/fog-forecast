@@ -71,6 +71,7 @@ Outside October to March fog is rare and the numbers mean less. At the 15 cities
 | `cities.json` | site, coordinates and usual rates for each city |
 | `src/model.js` | the four formulas |
 | `src/page.js` | fetches the forecast and draws it |
+| `prerender.js` | fetches every city's forecast at build time, so the pages already contain the numbers |
 | `src/city.html`, `src/index.html`, `src/style.css` | page templates and styles |
 | `src/how-to-predict-fog.html` | a short article on reading fog from a forecast |
 | `build.py` | writes one page per city into `_site/` |
@@ -80,15 +81,16 @@ The analysis that produced the weights is not in this repo.
 
 ## Running it
 
-It needs Python 3 to build and Node 20 or later for the tests. There are no packages to install.
+It needs Python 3 and Node 20 or later. There are no packages to install.
 
 ```sh
 node --test                        # run the tests
+node prerender.js                  # fetch the forecasts into forecasts.json (optional)
 python3 build.py                   # write the site to _site/
 python3 -m http.server -d _site    # serve it at http://localhost:8000
 ```
 
-Each push to `main` runs the tests, builds the site and publishes it to GitHub Pages (`.github/workflows/deploy.yml`).
+Each push to `main` runs the tests, builds the site and publishes it to GitHub Pages (`.github/workflows/deploy.yml`). The same workflow runs every three hours to refresh the numbers written into the pages. A browser fetches the latest forecast again when a page is opened. Search engines cannot, because Open-Meteo's robots.txt keeps crawlers out, so they read what the build wrote.
 
 ## Data
 
