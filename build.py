@@ -13,7 +13,7 @@ STATIC = ['style.css', 'model.js', 'page.js', 'google7870e9be589df912.html']   #
 ARTICLE = 'how-to-predict-fog'
 ICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%2335434d'/%3E"
         "%3Cpath d='M3 5h10M3 8h10M3 11h6' stroke='%23fff' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")
-PLACE_KEYS = ['lat', 'lon', 'tz', 'mist', 'fog', 'mistByHour', 'fogByHour']   # what page.js needs
+PLACE_KEYS = ['lat', 'lon', 'tz', 'model', 'mist', 'fog', 'mistByHour', 'fogByHour']   # what page.js needs; model only where it is not ICON-EU
 
 
 def percent(share):
@@ -31,7 +31,7 @@ def city_page(template, city, cities):
     return template.substitute(
         name=city['name'], site=city['site'], nav=nav,
         fog=percent(city['fog']), mist=percent(city['mist']),
-        place=json.dumps({key: city[key] for key in PLACE_KEYS}),
+        place=json.dumps({key: city[key] for key in PLACE_KEYS if key in city}),
         url=SITE_URL + slug(city) + '/', icon=ICON)
 
 

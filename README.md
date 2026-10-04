@@ -1,6 +1,6 @@
 # Fog forecast
 
-Chance of fog and mist on each of the next mornings, hour by hour, for 14 European cities.
+Chance of fog and mist on each of the next mornings, hour by hour, for 15 cities in Europe and the United States.
 
 Live at https://charlie42.github.io/fog-forecast/
 
@@ -8,7 +8,7 @@ I photograph fog in Berlin and wanted to know the day before how likely it is.
 
 ## How the number is made
 
-The page asks [Open-Meteo](https://open-meteo.com/) for the ICON-EU forecast at one site per city and takes six things from it:
+The page asks [Open-Meteo](https://open-meteo.com/) for the ICON-EU forecast at one site per city (the worldwide ICON forecast for the US cities, which ICON-EU does not reach) and takes six things from it:
 
 - highest humidity between 4 and 10 h
 - mean wind in those hours
@@ -19,7 +19,7 @@ The page asks [Open-Meteo](https://open-meteo.com/) for the ICON-EU forecast at 
 
 A logistic regression turns those, plus how often the site usually has fog, into a chance. There are four sets of weights: fog and mist, each for a whole morning and for a single hour. Fog means visibility under 1 km and mist under 5 km. A morning counts when that lasts at least two hours between 4 and 10 h.
 
-The weights were fitted once on all 14 cities together. A new place needs its usual fog and mist rates from its own visibility record and no fitting.
+The weights were fitted once on 14 European airports together. A new place needs its usual fog and mist rates from its own visibility record and no fitting.
 
 ## How well it works
 
@@ -40,11 +40,29 @@ Calibration with months left out: mornings given about 2, 9, 22, 39, 60 and 76% 
 Where it is weak:
 
 - Ranking mornings, it ties with the fog code in ICON's own output. At the same 1,133 alarms the fog code caught 623 mist mornings and the formula 621. What the formula adds is a percentage.
-- Fog skill differs by city: Prague 35%, Vienna 34%, Milan 31%, down to London 8%, Madrid 3% and Frankfurt 0%.
+- Fog skill differs by city: Prague 35%, Vienna 34%, Milan 31%, down to London 8%, Madrid 3% and Frankfurt 0%. See "Which cities are shown".
 - The page uses the day-ahead weights for mornings up to four days out. Mist skill falls from 28% at one day to 25, 21 and 17% at two, three and four days. Among mornings given 40% or more for mist, mist came on 60% at one day ahead and on 51% at four days.
 - Within a morning, the hourly formula ranks a misty hour above a clear one 69% of the time. The site's usual daily pattern alone manages 65%.
 - An airport is one point, often outside the city. Heathrow has mist on 7% of mornings, Stansted and Luton on 27%.
 - The forecast archive holds two and a half winters, and I chose the inputs and time windows while looking at the same data.
+
+## Which cities are shown
+
+A city gets a page only if its fog forecast is clearly better than its usual rate: fog skill of at least 10%, a 90% range (months resampled) that stays above zero, and at least 15 fog mornings in the test to judge by. Of the 14 European airports used for fitting, that leaves out Frankfurt (0%), Madrid (3%), London (8%) and Warsaw (10%, range from -3%).
+
+The US cities use the same weights, unchanged, with inputs from the worldwide ICON model. Tested on 14 US airports (6,131 October to March mornings, 349 with fog), skill over each airport's usual rate was 24% for mist and 18% for fog. Five pass the rule above:
+
+| | Mist | Fog |
+|---|---|---|
+| Sacramento | 43% | 36% |
+| Seattle | 18% | 30% |
+| Fresno | 39% | 26% |
+| Houston | 20% | 10% |
+| Atlanta | 17% | 10% |
+
+Left out: Los Angeles, New York, Denver, Portland, Chicago and Washington (fog skill not clearly above zero), and San Francisco, Boston and Minneapolis (fewer than 15 fog mornings). The formula knows fog that forms on calm, clear nights. It does not know fog that drifts in from the sea, which is most of what Los Angeles gets.
+
+Outside October to March fog is rare and the numbers mean less. In the US the formula had no skill from April to September. In Europe it had almost none from April to July; August and September were about as good as winter, August on few fog mornings.
 
 ## What is in the repo
 
@@ -74,4 +92,4 @@ Each push to `main` runs the tests, builds the site and publishes it to GitHub P
 
 ## Data
 
-Weather data by [Open-Meteo.com](https://open-meteo.com/) (CC BY 4.0), from the ICON-EU model of Deutscher Wetterdienst. Visibility reports from the [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/) and [DWD open data](https://opendata.dwd.de/).
+Weather data by [Open-Meteo.com](https://open-meteo.com/) (CC BY 4.0), from the ICON-EU and ICON global models of Deutscher Wetterdienst. Visibility reports from the [Iowa Environmental Mesonet](https://mesonet.agron.iastate.edu/) and [DWD open data](https://opendata.dwd.de/).

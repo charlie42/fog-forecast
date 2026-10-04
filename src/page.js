@@ -1,4 +1,5 @@
 // Fetches the weather forecast for one place and draws the fog and mist chances into the page.
+// The forecast is ICON-EU unless the place names another model (ICON-EU stops at Europe, so US places use icon_global).
 import {forecastMornings} from './model.js';
 
 const VARIABLES = 'relative_humidity_2m,temperature_2m,dew_point_2m,wind_speed_10m,precipitation,cloud_cover';
@@ -21,7 +22,7 @@ function morningHtml({date, mist, fog, hours}, today) {
 export async function showForecast(place, out = document.getElementById('forecast')) {
   try {
     const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${place.lat}&longitude=${place.lon}`
-      + `&hourly=${VARIABLES}&models=icon_eu&timezone=${place.tz}&past_days=1&forecast_days=4`);
+      + `&hourly=${VARIABLES}&models=${place.model ?? 'icon_eu'}&timezone=${place.tz}&past_days=1&forecast_days=4`);
     if (!response.ok) throw new Error(response.status);
     const mornings = forecastMornings((await response.json()).hourly, place);
     const today = new Date().toLocaleDateString('en-CA', {timeZone: place.tz});
