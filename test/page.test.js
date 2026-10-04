@@ -11,6 +11,7 @@ test('names today and tomorrow, and only those', () => {
   assert.match(dayLabel('2026-10-06', '2026-10-04'), /^Tuesday 6 Oct/);
   assert.match(dayLabel('2026-11-01', '2026-10-31'), /^Tomorrow, Sunday 1 Nov/);
   assert.equal(dayLabel('2026-10-05', '2026-10-04', 'de'), 'Morgen, Montag, 5. Okt.');
+  assert.equal(dayLabel('2026-10-05', '2026-10-04', 'it'), 'Domani, lunedì 5 ott');
 });
 
 test('says when fog is rare, by the place\'s own season', () => {
@@ -19,6 +20,7 @@ test('says when fog is rare, by the place\'s own season', () => {
   const note = (place, date, lang) => forecastHtml(hourly, place, lang, Date.parse(date)).split('<p>')[1] ?? '';
   assert.match(note(munich, '2026-05-10'), /rare from April to August.*starts in September/);
   assert.match(note(munich, '2026-05-10', 'de'), /^<small>Von April bis August ist Nebel selten.*beginnt im September/);
+  assert.match(note(munich, '2026-05-10', 'it'), /^<small>Tra aprile e agosto la nebbia è rara.*comincia a settembre/);
   assert.equal(note(munich, '2026-10-04'), '');
   assert.match(note({...munich, rare: [10, 3]}, '2026-01-10'), /rare from October to March.*starts in April/);
   assert.equal(note({...munich, rare: [10, 3]}, '2026-05-10'), '');

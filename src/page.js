@@ -20,6 +20,12 @@ const TEXT = {
     failed: 'Die Vorhersage konnte nicht geladen werden. Seite neu laden, um es noch einmal zu versuchen.',
     rare: (first, last, next) => `Von ${first} bis ${last} ist Nebel selten, in diesen Städten etwa an einem von hundert Morgen. Das ist zu wenig, als dass eine Vorhersage ihn treffen könnte. Die Zahlen sind dann nur ein grober Anhaltspunkt. Die Nebelsaison beginnt im ${next}.`,
   },
+  it: {
+    locale: 'it-IT', days: ['Oggi, ', 'Domani, '], mist: 'foschia', fog: 'nebbia', byHour: 'ora per ora',
+    none: 'Al momento non c\'è una previsione. Riprovare tra un\'ora.',
+    failed: 'Impossibile caricare la previsione. Ricaricare la pagina per riprovare.',
+    rare: (first, last, next) => `Tra ${first} e ${last} la nebbia è rara, in queste città circa una mattina su cento. È troppo poco perché una previsione possa coglierla. In questi mesi i numeri sono solo un'indicazione di massima. La stagione della nebbia comincia a ${next}.`,
+  },
 };
 export const languages = Object.keys(TEXT);
 

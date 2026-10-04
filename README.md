@@ -90,12 +90,12 @@ Fog has a season, and outside it the numbers mean less. At the 21 northern citie
 
 | | |
 |---|---|
-| `cities.json` | site, coordinates and usual rates for each city, and its German name where it has a German page |
+| `cities.json` | site, coordinates and usual rates for each city, and its German or Italian name where it has a page in that language |
 | `src/model.js` | the four formulas |
-| `src/page.js` | fetches the forecast and draws it, in English or German |
+| `src/page.js` | fetches the forecast and draws it, in English, German or Italian |
 | `prerender.js` | fetches every city's forecast at build time, so the pages already contain the numbers |
 | `src/city.html`, `src/index.html`, `src/style.css` | page templates and styles |
-| `src/city.de.html`, `src/index.de.html` | the same templates in German |
+| `src/city.de.html`, `src/index.de.html`, `src/city.it.html`, `src/index.it.html` | the same templates in German and Italian |
 | `src/city.fog.html` | the city page for a place without a mist number |
 | `src/how-to-predict-fog.html` | a short article on reading fog from a forecast |
 | `build.py` | writes one page per city and language into `_site/` |
@@ -103,7 +103,7 @@ Fog has a season, and outside it the numbers mean less. At the 21 northern citie
 
 The analysis that produced the weights is not in this repo.
 
-Berlin, Hamburg, Munich, Vienna and Zurich also have a German page under `de/`. A page in another language needs its words in `src/page.js`, two templates named after it, an entry in `LANGUAGES` in `build.py`, and the translated names in `cities.json`.
+Berlin, Hamburg, Munich, Vienna and Zurich also have a German page under `de/`, and Bologna, Milan and Venice an Italian one under `it/`. A page in another language needs its words in `src/page.js`, two templates named after it, a few words at the top of `build.py`, and the translated names in `cities.json`.
 
 ## Running it
 

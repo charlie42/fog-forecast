@@ -15,11 +15,12 @@ ICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0
         "%3Cpath d='M3 5h10M3 8h10M3 11h6' stroke='%23fff' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")
 # English has a page for every city. Another language has one for each city that carries its code in cities.json,
 # plus templates named after it in src/ and its words in page.js.
-LANGUAGES = {'en': 'English', 'de': 'Deutsch'}
-LOADING = {'en': 'loading…', 'de': 'lädt…'}
-AND = {'en': ' and ', 'de': ' und '}
+LANGUAGES = {'en': 'English', 'de': 'Deutsch', 'it': 'Italiano'}
+LOADING = {'en': 'loading…', 'de': 'lädt…', 'it': 'caricamento…'}
+AND = {'en': ' and ', 'de': ' und ', 'it': ' e '}
 # The usual rates in cities.json are for the foggier half of the year: north of the equator, then south of it.
-SEASON = {'en': ['October to March', 'April to September'], 'de': ['Oktober bis März', 'April bis September']}
+SEASON = {'en': ['October to March', 'April to September'], 'de': ['Oktober bis März', 'April bis September'],
+          'it': ['ottobre a marzo', 'aprile a settembre']}
 PLACE_KEYS = ['lat', 'lon', 'tz', 'model', 'formula', 'rare', 'mist', 'fog', 'mistByHour', 'fogByHour']   # what page.js and model.js need; model, formula and rare only where they differ from the usual
 
 
@@ -86,8 +87,10 @@ def index_page(cities, lang):
         f'<li><a href="{slug(c)}/">{c["name"]}</a> <small>{c["site"]}</small></li>' for c in places)
     rest = '\n'.join(
         f'<li><a href="../{address(c, "en")}" lang="en" hreflang="en">{c["name"]}</a></li>' for c in cities if not in_language(c, lang))
+    switch = ' · '.join(f'<a href="{"../" if lang != "en" else ""}{folder(other)}" lang="{other}" hreflang="{other}">{name}</a>'
+                        for other, name in LANGUAGES.items() if other != lang)
     return template('index', lang).substitute(
-        count=len(places), names=', '.join(names), names_and=', '.join(names[:-1]) + AND[lang] + names[-1], rows=rows, rest=rest,
+        switch=switch, count=len(places), names=', '.join(names), names_and=', '.join(names[:-1]) + AND[lang] + names[-1], rows=rows, rest=rest,
         url=SITE_URL + folder(lang), alternates=alternates({other: folder(other) for other in LANGUAGES}), icon=ICON)
 
 
