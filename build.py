@@ -21,7 +21,7 @@ AND = {'en': ' and ', 'de': ' und ', 'it': ' e '}
 # The usual rates in cities.json are for the foggier half of the year: north of the equator, then south of it.
 SEASON = {'en': ['October to March', 'April to September'], 'de': ['Oktober bis März', 'April bis September'],
           'it': ['ottobre a marzo', 'aprile a settembre']}
-PLACE_KEYS = ['lat', 'lon', 'tz', 'model', 'formula', 'rare', 'mist', 'fog', 'mistByHour', 'fogByHour']   # what page.js and model.js need; model, formula and rare only where they differ from the usual
+PLACE_KEYS = ['lat', 'lon', 'tz', 'model', 'formula', 'rare', 'mist', 'fog', 'mistByHour', 'fogByMonth', 'fogByHour']   # what page.js and model.js need; model, formula and rare only where they differ from the usual
 
 
 def percent(share):
@@ -118,7 +118,7 @@ def main():
             (OUT / address(city, lang) / 'index.html').write_text(page, encoding='utf-8')
             urls.append(SITE_URL + address(city, lang))
 
-    by_fog = sorted(cities, key=lambda c: c['fog'])
+    by_fog = sorted((c for c in cities if 'mist' in c), key=lambda c: c['fog'])   # the article is about places with fog and mist
     (OUT / ARTICLE).mkdir()
     (OUT / ARTICLE / 'index.html').write_text(template(ARTICLE, 'en').substitute(
         low=percent(by_fog[0]['fog']), lowest=by_fog[0]['name'], high=percent(by_fog[-1]['fog']), highest=by_fog[-1]['name'],

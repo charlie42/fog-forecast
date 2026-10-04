@@ -39,3 +39,12 @@ test('draws a row per morning from a saved Munich forecast', () => {
   assert.ok(german.startsWith('<div class="morning">Heute, Sonntag, 4. Okt.: Dunst <b>65%</b> · Nebel <b>60%</b>'));
   assert.ok(german.includes('<summary><small>nach Stunde</small></summary>'));
 });
+
+test('leaves mist out for a place without a mist rate', () => {
+  const delhi = read('../cities.json').find(city => city.name === 'Delhi');
+  const {now, hourly} = read('delhi-forecast.json');
+  const html = forecastHtml(hourly, delhi, 'en', Date.parse(now));
+  assert.ok(html.startsWith('<div class="morning">Tomorrow, Saturday 10 Jan: fog <b>87%</b>'));
+  assert.ok(html.includes('fog: 3h 71% · 4h 73%'));
+  assert.ok(!html.includes('mist'));
+});

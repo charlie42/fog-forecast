@@ -32,3 +32,20 @@ test('leaves out a morning with missing weather values', () => {
   const all = forecastMornings(hourly, munich, Date.parse(now));
   assert.deepEqual(dates(forecastMornings(gap, munich, Date.parse(now))), dates(all).slice(1));
 });
+
+test('gives the reference fog chances for Delhi, which has weights of its own, a rate per month and no mist', () => {
+  const delhi = read('../cities.json').find(city => city.name === 'Delhi');
+  const saved = read('delhi-forecast.json');   // five January days of the archived day-ahead forecast
+  const percent = p => Math.round(100 * p);
+  const mornings = forecastMornings(saved.hourly, delhi, Date.parse(saved.now));
+  assert.deepEqual(mornings.map(m => ({fog: percent(m.fog), fogHours: m.hours.map(x => percent(x.fog))})), read('delhi-expected.json'));
+  assert.ok(mornings.every(m => !('mist' in m) && m.hours.every(x => !('mist' in x))));
+});
+
+test('uses the usual fog rate of the month where a place has one', () => {
+  const delhi = read('../cities.json').find(city => city.name === 'Delhi');
+  const saved = read('delhi-forecast.json');
+  const inMonth = month => ({...saved.hourly, time: saved.hourly.time.map(t => '2026-' + month + t.slice(7))});
+  const first = month => forecastMornings(inMonth(month), delhi, Date.parse(`2026-${month}-09T12:00:00Z`))[0].fog;
+  assert.ok(first('10') < first('01') / 3);   // the same weather counts for much less in October than in January
+});

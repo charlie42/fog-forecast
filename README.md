@@ -1,6 +1,6 @@
 # Fog forecast
 
-Chance of fog and mist on each of the next mornings, hour by hour, for 23 cities in Europe, the United States and New Zealand.
+Chance of fog and mist on each of the next mornings, hour by hour, for 24 cities in Europe, the United States, New Zealand and India.
 
 Live at https://charlie42.github.io/fog-forecast/
 
@@ -20,6 +20,8 @@ The page asks [Open-Meteo](https://open-meteo.com/) for the ICON-EU forecast at 
 A logistic regression turns those, plus how often the site usually has fog, into a chance. There are four sets of weights: fog and mist, each for a whole morning and for a single hour. Fog means visibility under 1 km and mist under 5 km. A morning counts when that lasts at least two hours between 4 and 10 h.
 
 The weights were fitted once on 14 European airports together. A new place needs its usual fog and mist rates from its own visibility record and no fitting.
+
+Delhi is the exception. The European weights rank its mornings correctly but say a third of the fog that happens, so it has fog weights of its own, fitted on 13 airports on the plain of the Indus and Ganges. Fog there is tied to the season far more than in Europe (4% of October mornings, 75% in January), so the usual rate that goes in is the one for the calendar month, from the last five years of airport reports. There is no mist number for Delhi: smog keeps visibility under 5 km on almost every winter morning.
 
 ## How well it works
 
@@ -80,7 +82,9 @@ Tested and left out:
 
 - Fog skill not clearly above zero, or under 10%: Los Angeles, New York, Denver, Portland, Chicago, Washington, San Diego, Vancouver, Turin, Lahore, Amritsar and London Luton.
 - Fewer than 15 fog mornings: San Francisco, Boston, Minneapolis, Toronto, Melbourne and Dubai.
-- Delhi and Islamabad: smog keeps visibility under 5 km on most mornings (at Delhi on 436 of 437), so the mist number means nothing, and the fog number at Delhi is a third of what happens.
+- Islamabad: the formula never says more than about 9% there, and 15 of its 22 fog mornings fell in one month.
+
+Delhi was tested with Delhi left out of the fit, the tested month left out too, and its monthly rates taken from the years before the test (136 fog mornings in 437). Fog skill was 40% (90% range 25 to 53) over its flat winter rate and 20% (7 to 31) over its usual rate for the month, which is the fairer comparison there. By hour it was 36% and 16%. It reads high: it said 39% on average and fog came on 31% of mornings, because the last two winters had less fog than the five before. Mornings given about 60% had fog 44% of the time, and those given about 84% had it 76% of the time. In October it said 12% and fog came on 3%. Lahore and Amritsar would work with the same weights (26% and 19% over their monthly rates) and are not on the site.
 
 The formula knows fog that forms on calm, clear nights. It does not know fog that drifts in from the sea, which is most of what Los Angeles and the San Francisco coast get.
 
