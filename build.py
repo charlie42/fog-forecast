@@ -9,7 +9,6 @@ ROOT = Path(__file__).parent
 SRC = ROOT / 'src'
 OUT = ROOT / '_site'
 SITE_URL = 'https://charlie42.github.io/fog-forecast/'   # used for canonical links and the sitemap
-REPO_URL = 'https://github.com/charlie42/fog-forecast'
 STATIC = ['style.css', 'model.js', 'page.js']
 ICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%2335434d'/%3E"
         "%3Cpath d='M3 5h10M3 8h10M3 11h6' stroke='%23fff' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")
@@ -25,26 +24,22 @@ def slug(city):
 
 
 def city_page(template, city, cities):
-    nav = '\n'.join(
-        f'<li><a href="../{slug(c)}/"' + (' aria-current="page"' if c is city else '') + f'>{c["name"]}</a></li>'
+    nav = '<br>\n'.join(
+        f'<b>{c["name"]}</b>' if c is city else f'<a href="../{slug(c)}/">{c["name"]}</a>'
         for c in cities)
     return template.substitute(
-        name=city['name'], site=city['site'], count=len(cities), nav=nav,
+        name=city['name'], site=city['site'], nav=nav,
         fog=percent(city['fog']), mist=percent(city['mist']),
         place=json.dumps({key: city[key] for key in PLACE_KEYS}),
-        url=SITE_URL + slug(city) + '/', repo=REPO_URL, icon=ICON)
+        url=SITE_URL + slug(city) + '/', icon=ICON)
 
 
 def index_page(template, cities):
-    # The cell's --veil is on the same scale page.js uses for the forecast.
-    def rate(share):
-        return f'<td style="--veil:{share ** 0.6:.2f}">{percent(share)}</td>'
     rows = '\n'.join(
-        f'<tr><th scope="row"><a href="{slug(c)}/">{c["name"]}</a><small>{c["site"]}</small></th>{rate(c["fog"])}{rate(c["mist"])}</tr>'
-        for c in sorted(cities, key=lambda c: -c['fog']))
+        f'<li><a href="{slug(c)}/">{c["name"]}</a> <small>{c["site"]}</small></li>' for c in cities)
     return template.substitute(
         count=len(cities), names=', '.join(c['name'] for c in cities), rows=rows,
-        url=SITE_URL, repo=REPO_URL, icon=ICON)
+        url=SITE_URL, icon=ICON)
 
 
 def main():

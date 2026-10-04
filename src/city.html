@@ -14,18 +14,11 @@
 <body>
 <main>
 <h1>Fog forecast for $name</h1>
-<p class="lede">The chance of fog and mist at $site on each of the next mornings, with the hours from 3 to 11.</p>
-<div id="forecast" aria-live="polite">Loading the forecast…</div>
-<div class="notes">
-<p>Fog means visibility under 1 km, mist under 5 km. The large number is the chance of at least two such hours between 4 and 10 h. The rows give the chance in percent for each single hour.</p>
-<p>The numbers come from the ICON-EU weather forecast (humidity, wind, rain, cloud and overnight cooling) and a formula fitted to visibility reports from <a href="../">$count European cities</a> since January 2024. At $site, fog usually turns up on $fog of October to March mornings and mist on $mist. Tomorrow's number is the most reliable. Mornings further ahead are less certain.</p>
-<p>Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a>. How it works and how well: <a href="$repo">source on GitHub</a>.</p>
-</div>
+<div id="forecast">loading…</div>
+<p><small>Mist = visibility under 5 km, fog = under 1 km, for at least two hours between 04 and 10 h. At $site, fog usually turns up on $fog of October to March mornings and mist on $mist. Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a>.</small></p>
 </main>
-<nav aria-label="Cities">
-<ul>
+<nav>
 $nav
-</ul>
 </nav>
 <script type="module">
 import {showForecast} from '../page.js';

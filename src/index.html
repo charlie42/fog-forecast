@@ -14,16 +14,10 @@
 <body>
 <main>
 <h1>Fog forecast for $count European cities</h1>
-<p class="lede">The chance of fog and mist on each of the next mornings, hour by hour. Pick a city. They are listed from the foggiest down.</p>
-<table class="cities">
-<colgroup><col><col class="rate"><col class="rate"></colgroup>
-<tr><td></td><th scope="col">Mornings with fog</th><th scope="col">with mist</th></tr>
+<ul>
 $rows
-</table>
-<div class="notes">
-<p>The table shows how often each place has fog (visibility under 1 km) or mist (under 5 km) for at least two hours between 4 and 10 h, October to March, from its own visibility reports. Each city's page starts from that usual rate and moves it up or down with the weather forecast.</p>
-<p>Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a>. How it works and how well: <a href="$repo">source on GitHub</a>.</p>
-</div>
+</ul>
+<p><small>Mist = visibility under 5 km, fog = under 1 km, for at least two hours between 04 and 10 h. Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a>.</small></p>
 </main>
 </body>
 </html>

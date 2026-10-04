@@ -1,91 +1,14 @@
-/* The page is the colour of a hazy dawn. Table cells turn white as the chance of fog rises. */
-:root {
-  --ground: #b7c3cb;
-  --ink: #16222a;
-  --quiet: #35434d;
-  --line: rgb(22 34 42 / .16);
-  color-scheme: light;
-}
-
-* { box-sizing: border-box; }
-
 body {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) max-content;
-  gap: 0 4rem;
-  align-items: start;
-  max-width: 54rem;
-  margin: 0 auto;
-  padding: 3.5rem 1.25rem 4rem;
-  background: var(--ground);
-  color: var(--ink);
-  font: 1.0625rem/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 3em;
+  max-width: 44em;
+  margin: 3em auto;
+  padding: 0 1em;
+  font: 20px system-ui;
 }
-
-h1 {
-  margin: 0 0 .5rem;
-  font-size: 2rem;
-  font-weight: 650;
-  line-height: 1.15;
-  letter-spacing: -.02em;
-  text-wrap: balance;
-}
-
-.lede { margin: 0 0 2.5rem; max-width: 34rem; color: var(--quiet); }
-
-a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .18em; }
-a:hover { text-decoration-thickness: 2px; }
-:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 2px; }
-
-/* One morning: the day, the chance for the morning as a whole, then hour by hour. */
-.morning { margin-bottom: 2.25rem; }
-.morning h2 { margin: 0; font-size: 1rem; font-weight: 600; }
-.chance { margin: 0 0 .5rem; color: var(--quiet); }
-.chance b {
-  color: var(--ink);
-  font-size: 2.75rem;
-  font-weight: 300;
-  line-height: 1.15;
-  letter-spacing: -.03em;
-}
-.chance span { margin-left: .9rem; }
-
-table {
-  width: calc(100% + 6px);
-  max-width: 31rem;
-  margin: 0 -3px;
-  table-layout: fixed;
-  border-spacing: 3px;
-  font-size: .8125rem;
-  font-variant-numeric: tabular-nums;
-}
-th { padding: 0; color: var(--quiet); font-weight: 400; }
-th[scope="row"] { width: 2.7rem; padding-left: 3px; text-align: left; }
-td[style] {
-  height: 2rem;
-  border-radius: 3px;
-  background: rgb(255 255 255 / var(--veil));
-  box-shadow: inset 0 0 0 1px var(--line);
-  text-align: center;
-}
-
-/* The list of cities on the front page, with the same cells for the usual rates. */
-.cities { max-width: 27rem; }
-.cities th { padding: 0 .75rem .25rem 3px; text-align: left; vertical-align: bottom; }
-.cities th[scope="row"] { width: auto; padding-bottom: 0; color: var(--ink); font-size: 1.0625rem; }
-.cities th small { display: block; margin-top: -.2rem; color: var(--quiet); font-size: .8125rem; }
-.cities td[style] { width: 4.5rem; height: 2.9rem; }
-.cities col.rate { width: 4.75rem; }
-
-.notes { max-width: 34rem; margin-top: 3rem; color: var(--quiet); font-size: .875rem; }
-
-nav { padding-top: .5rem; font-size: .9375rem; line-height: 1.9; }
-nav ul { margin: 0; padding: 0; list-style: none; }
-nav [aria-current] { font-weight: 650; text-decoration: none; }
-
-@media (max-width: 44rem) {
-  body { grid-template-columns: minmax(0, 1fr); padding-top: 2rem; }
-  h1 { font-size: 1.625rem; }
-  nav { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line); }
-  nav ul { display: flex; flex-wrap: wrap; gap: 0 1.1rem; }
-}
+main { flex: 1 1 16em; }
+h1 { margin: 1em 0; font-size: 1.17em; }
+.morning { margin: 1em 0; }
+nav { margin-top: 1.2em; line-height: 1.6; }
+ul { margin: 0; padding: 0; list-style: none; line-height: 1.6; }
