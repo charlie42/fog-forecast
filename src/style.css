@@ -15,3 +15,5 @@ nav { margin-top: 1.2em; line-height: 1.6; }
 article { max-width: 34em; line-height: 1.5; }
 article h2 { margin: 1.5em 0 0; font-size: 1em; }
 article h2 + p { margin-top: .3em; }
+table { border-collapse: collapse; }
+th, td { padding: 0 1.5em .2em 0; text-align: left; vertical-align: top; }

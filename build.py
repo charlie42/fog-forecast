@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds the site into _site/: a page per city and language, the lists of cities, a sitemap, and the scripts and stylesheet from src/."""
+"""Builds the site into _site/: a page per city and language, the lists of cities, two pages of text, a sitemap, and the scripts and stylesheet from src/."""
 import json
 import shutil
 from pathlib import Path
@@ -11,6 +11,7 @@ OUT = ROOT / '_site'
 SITE_URL = 'https://charlie42.github.io/fog-forecast/'   # used for canonical links and the sitemap
 STATIC = ['style.css', 'model.js', 'page.js', 'google7870e9be589df912.html']   # the last one proves ownership to Google Search Console
 ARTICLE = 'how-to-predict-fog'
+ACCURACY = 'accuracy'
 ICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%2335434d'/%3E"
         "%3Cpath d='M3 5h10M3 8h10M3 11h6' stroke='%23fff' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")
 # English has a page for every city. Another language has one for each city that carries its code in cities.json,
@@ -124,6 +125,11 @@ def main():
         low=percent(by_fog[0]['fog']), lowest=by_fog[0]['name'], high=percent(by_fog[-1]['fog']), highest=by_fog[-1]['name'],
         url=SITE_URL + ARTICLE + '/', icon=ICON), encoding='utf-8')
     urls.append(SITE_URL + ARTICLE + '/')
+
+    (OUT / ACCURACY).mkdir()
+    (OUT / ACCURACY / 'index.html').write_text(
+        template(ACCURACY, 'en').substitute(url=SITE_URL + ACCURACY + '/', icon=ICON), encoding='utf-8')
+    urls.append(SITE_URL + ACCURACY + '/')
 
     (OUT / 'sitemap.xml').write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
