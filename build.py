@@ -8,7 +8,7 @@ from string import Template
 ROOT = Path(__file__).parent
 SRC = ROOT / 'src'
 OUT = ROOT / '_site'
-SITE_URL = 'https://charlie42.github.io/fog-forecast/'   # used for canonical links and the sitemap
+SITE_URL = 'https://chanceoffog.com/'   # used for canonical links and the sitemap
 STATIC = ['style.css', 'model.js', 'page.js', 'google7870e9be589df912.html']   # the last one proves ownership to Google Search Console
 ARTICLE = 'how-to-predict-fog'
 ACCURACY = 'accuracy'

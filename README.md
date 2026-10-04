@@ -2,7 +2,7 @@
 
 Chance of fog and mist on each of the next mornings, hour by hour, for 26 cities in Europe, the United States, New Zealand, India and Pakistan. Meant for photographers; it says nothing about road or flight conditions.
 
-Live at https://charlie42.github.io/fog-forecast/
+Live at https://chanceoffog.com/
 
 The numbers come from a logistic regression on six values of the ICON weather forecast, fitted on two and a half winters of airport visibility reports. [HOW-IT-WORKS.md](HOW-IT-WORKS.md) has the formula, the test results and the cities that were left out.
 
