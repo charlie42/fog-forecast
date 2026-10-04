@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  actions: write   # for the step that keeps the schedule alive
   pages: write
   id-token: write
 
@@ -23,6 +24,11 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # GitHub switches a schedule off after 60 days without a commit. Enabling the workflow again counts as activity.
+      - run: gh workflow enable deploy.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
       - uses: actions/checkout@v7
       - run: node --test
       - run: node prerender.js

@@ -90,7 +90,7 @@ python3 build.py                   # write the site to _site/
 python3 -m http.server -d _site    # serve it at http://localhost:8000
 ```
 
-Each push to `main` runs the tests, builds the site and publishes it to GitHub Pages (`.github/workflows/deploy.yml`). The same workflow runs every three hours to refresh the numbers written into the pages. A browser fetches the latest forecast again when a page is opened. Search engines cannot, because Open-Meteo's robots.txt keeps crawlers out, so they read what the build wrote.
+Each push to `main` runs the tests, builds the site and publishes it to GitHub Pages (`.github/workflows/deploy.yml`). The same workflow runs every three hours to refresh the numbers written into the pages. GitHub switches a schedule off after 60 days without a commit, so each run enables its own workflow again. A browser fetches the latest forecast again when a page is opened. Search engines cannot, because Open-Meteo's robots.txt keeps crawlers out, so they read what the build wrote.
 
 ## Data
 
