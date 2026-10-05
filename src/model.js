@@ -34,15 +34,19 @@ const clamp = (value, low, high) => Math.min(Math.max(value, low), high);
 const chance = (weights, inputs, shift = 0) =>
   1 / (1 + Math.exp(-inputs.reduce((z, value, k) => z + weights[k] * value, weights[inputs.length] + shift)));
 
-// The date and hour on the clock at the place, e.g. "2026-10-04T13", whatever the viewer's own time zone.
-function localHour(now, tz) {
-  const parts = new Intl.DateTimeFormat('en-CA', {timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23'}).formatToParts(now);
-  const part = type => parts.find(p => p.type === type).value;
-  return `${part('year')}-${part('month')}-${part('day')}T${part('hour')}`;
+// The date and hour on the clock at a place, e.g. "2026-10-04T13", whatever the viewer's own time zone.
+function clockAt(tz) {
+  const format = new Intl.DateTimeFormat('en-CA', {timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hourCycle: 'h23'});
+  return time => {
+    const part = Object.fromEntries(format.formatToParts(time).map(p => [p.type, p.value]));
+    return `${part.year}-${part.month}-${part.day}T${part.hour}`;
+  };
 }
 
+const dayBefore = date => new Date(Date.parse(date) - 864e5).toISOString().slice(0, 10);
+
 /**
- * @param hourly  The "hourly" block of an Open-Meteo forecast in the place's local time, with
+ * @param hourly  The "hourly" block of an Open-Meteo forecast with `time` in seconds since 1970 (timeformat=unixtime), and
  *                relative_humidity_2m, temperature_2m, dew_point_2m, wind_speed_10m, precipitation
  *                and cloud_cover. It has to start the day before the first morning wanted.
  * @param place   Time zone and usual rates for the place: {tz, mist, fog, mistByHour, fogByHour}, see cities.json.
@@ -57,36 +61,46 @@ function localHour(now, tz) {
  *                no `mist` for a place without mist rates.
  */
 export function forecastMornings(hourly, place, now = Date.now()) {
-  const h = hourly, hourNow = localHour(now, place.tz);
+  const clock = clockAt(place.tz), hourNow = clock(now);
   const weights = FOG[place.formula ?? 'europe'], hasMist = place.mist !== undefined;
   const mistShift = place.mistShift ?? 0, fogShift = place.fogShift ?? 0;
-  return h.time.flatMap((time, midnight) => {
-    const hasEvening = midnight >= 6, hasMorning = midnight + 12 <= h.time.length;
-    if (!time.endsWith('T00:00') || !hasEvening || !hasMorning) return [];
-    if (time.slice(0, 10) + 'T12' <= hourNow) return [];
+
+  // Every hour goes by the clock at the place in that hour. Open-Meteo's own local times count all the hours of an answer
+  // from the clock on the day it was asked for, an hour off on the far side of a clock change. Of an hour that comes twice
+  // when the clocks go back, the first is kept, as when the weights were fitted.
+  const clockHours = hourly.time.map(seconds => clock(1000 * seconds));
+  const once = values => values.filter((_, i) => clockHours.indexOf(clockHours[i]) === i);
+  const time = once(clockHours), at = clockHour => time.indexOf(clockHour);
+  const h = Object.fromEntries(VARIABLES.map(key => [key, once(hourly[key])]));
+
+  return [...new Set(time.map(clockHour => clockHour.slice(0, 10)))].flatMap(date => {
+    const eighteen = at(dayBefore(date) + 'T18'), four = at(date + 'T04'), eleven = at(date + 'T11');
+    if (eighteen < 0 || four < 0 || eleven < 0) return [];
+    if (date + 'T12' <= hourNow) return [];
     // A morning with a gap anywhere from 18 h the day before to 11 h is left out. Open-Meteo sends null for a missing value.
     const missing = value => value == null || Number.isNaN(value);
-    if (VARIABLES.some(key => h[key].slice(midnight - 6, midnight + 12).some(missing))) return [];
+    if (VARIABLES.some(key => h[key].slice(eighteen, eleven + 1).some(missing))) return [];
 
-    const morning = key => h[key].slice(midnight + 4, midnight + 10);   // 04 to 09 h
-    const evening = key => h[key].slice(midnight - 6, midnight - 3);    // 18 to 20 h the day before
+    const morning = key => h[key].slice(four, four + 6);            // 04 to 09 h
+    const evening = key => h[key].slice(eighteen, eighteen + 3);    // 18 to 20 h the day before
     const morningInputs = [
       Math.max(...morning('relative_humidity_2m')),
       mean(morning('wind_speed_10m')),
       // Rain from 21 to 06 h plus rain from 04 to 09 h. The overlap is counted twice, as it was when the weights were fitted.
-      Math.log1p(sum(h.precipitation.slice(midnight - 3, midnight + 7)) + sum(morning('precipitation'))),
+      Math.log1p(sum(h.precipitation.slice(eighteen + 3, four + 3)) + sum(morning('precipitation'))),
       mean(evening('cloud_cover')),
       mean(evening('temperature_2m')) - mean(evening('dew_point_2m')),          // how far the evening air is from saturation
       mean(evening('temperature_2m')) - Math.min(...morning('temperature_2m'))];   // overnight cooling
 
     // The usual fog rate, as log-odds, for the morning and for each hour. The limits are those used when the monthly weights were fitted.
-    const monthRate = place.fogByMonth?.[time.slice(5, 7) - 1];
+    const monthRate = place.fogByMonth?.[date.slice(5, 7) - 1];
     const fogUsual = monthRate === undefined ? logOdds(place.fog) : logOdds(clamp(monthRate, 0.005, 0.995));
     const fogUsualAt = k => monthRate === undefined ? logOdds(place.fogByHour[k])
       : logOdds(clamp(place.fogByHour[k] * monthRate / place.fog, 0.005, 0.97));
 
-    const hours = HOURS.map((hour, k) => {
-      const i = midnight + hour;
+    const hours = HOURS.flatMap((hour, k) => {
+      const i = at(`${date}T${String(hour).padStart(2, '0')}`);
+      if (i < 0) return [];   // an hour the clocks skip
       const hourInputs = [
         h.relative_humidity_2m[i],
         h.wind_speed_10m[i],
@@ -99,6 +113,6 @@ export function forecastMornings(hourly, place, now = Date.now()) {
 
     const fog = chance(weights.morning, [...morningInputs, fogUsual], fogShift);
     const morningChances = hasMist ? {mist: chance(MIST_MORNING, [...morningInputs, logOdds(place.mist)], mistShift), fog} : {fog};
-    return [{date: time.slice(0, 10), hours, ...morningChances}];
+    return [{date, hours, ...morningChances}];
   });
 }

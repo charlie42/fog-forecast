@@ -77,7 +77,7 @@ function updatedHtml(lang, now) {
 
 export const forecastUrl = place =>
   `https://api.open-meteo.com/v1/forecast?latitude=${place.lat}&longitude=${place.lon}`
-  + `&hourly=${VARIABLES.join(',')}&models=${place.model ?? 'icon_eu'}&timezone=${place.tz}&past_days=1&forecast_days=4`;
+  + `&hourly=${VARIABLES.join(',')}&models=${place.model ?? 'icon_eu'}&timezone=${place.tz}&timeformat=unixtime&past_days=1&forecast_days=4`;
 
 // The rows for one place, from the "hourly" block of the Open-Meteo answer to `forecastUrl`.
 export function forecastHtml(hourly, place, lang = 'en', now = Date.now()) {
