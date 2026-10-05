@@ -98,7 +98,7 @@ def index_page(cities, lang):
     places = [in_language(c, lang) for c in cities if in_language(c, lang)]
     names = [c['name'] for c in places]
     rows = '\n'.join(
-        f'<li><a href="{slug(c)}/">{c["name"]}</a> <small>{c["site"]}</small></li>' for c in places)
+        f'<li><a href="{slug(c)}/">{c["name"]}</a></li>' for c in places)
     rest = '\n'.join(
         f'<li><a href="../{address(c, "en")}" lang="en" hreflang="en">{c["name"]}</a></li>' for c in cities if not in_language(c, lang))
     switch = ' · '.join(f'<a href="{"../" if lang != "en" else ""}{folder(other)}" lang="{other}" hreflang="{other}">{name}</a>'
