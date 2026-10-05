@@ -9,12 +9,11 @@ ROOT = Path(__file__).parent
 SRC = ROOT / 'src'
 OUT = ROOT / '_site'
 SITE_URL = 'https://chanceoffog.com/'   # used for canonical links and the sitemap
-STATIC = ['style.css', 'model.js', 'page.js', 'google7870e9be589df912.html']   # the last one proves ownership to Google Search Console
+STATIC = ['style.css', 'model.js', 'page.js', 'favicon.svg', 'google7870e9be589df912.html']   # the last one proves ownership to Google Search Console
 ARTICLE = 'how-to-predict-fog'
 ACCURACY = 'accuracy'
 MIST = 'mist-vs-fog'   # its pictures are in src/ in a folder of the same name
-ICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%2335434d'/%3E"
-        "%3Cpath d='M3 5h10M3 8h10M3 11h6' stroke='%23fff' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")
+ICON = '/favicon.svg'   # a pine in fog; the address starts at the root, so it is the same on every page
 # English has a page for every city. Another language has one for each city that carries its code in cities.json,
 # plus templates named after it in src/ and its words in page.js.
 LANGUAGES = {'en': 'English', 'de': 'Deutsch', 'it': 'Italiano'}

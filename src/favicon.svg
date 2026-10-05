@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+<defs>
+<clipPath id="square"><rect width="16" height="16" rx="3"/></clipPath>
+<filter id="soft"><feGaussianBlur stdDeviation=".35"/></filter>
+<filter id="softer"><feGaussianBlur stdDeviation=".7"/></filter>
+<linearGradient id="fog" x1="0" y1="0" x2="0" y2="1"><stop offset=".45" stop-color="#d9d6cf" stop-opacity="0"/><stop offset=".9" stop-color="#d9d6cf" stop-opacity=".95"/></linearGradient>
+</defs>
+<g clip-path="url(#square)">
+<rect width="16" height="16" fill="#d9d6cf"/>
+<path transform="translate(12.6 4) scale(.8)" d="M0 0l3.6 6h-2l2.9 4.5H1v2.5h-2V10.5h-3.5l2.9-4.5h-2z" fill="#c5c0b6" filter="url(#softer)"/>
+<path transform="translate(9.2 2.8) scale(.92)" d="M0 0l3.6 6h-2l2.9 4.5H1v2.5h-2V10.5h-3.5l2.9-4.5h-2z" fill="#a0978a" filter="url(#soft)"/>
+<rect width="16" height="16" fill="url(#fog)"/>
+<path d="M-1 16V13.6Q4 12.6 9 13.6T17 13.4V16z" fill="#5a4a2c"/>
+<path transform="translate(5 1.4) scale(1.05)" d="M0 0l3.6 6h-2l2.9 4.5H1v2.5h-2V10.5h-3.5l2.9-4.5h-2z" fill="#33291a"/>
+</g>
+</svg>
