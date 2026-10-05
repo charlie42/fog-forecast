@@ -12,6 +12,7 @@
 // hour under 1 km as fog only if the air was within 2 C of saturation, which leaves dry smog out.
 
 export const HOURS = [3, 4, 5, 6, 7, 8, 9, 10, 11];
+export const VARIABLES = ['relative_humidity_2m', 'temperature_2m', 'dew_point_2m', 'wind_speed_10m', 'precipitation', 'cloud_cover'];
 
 // Weights in the order of `morningInputs` below, then the usual rate (as log-odds), then the constant.
 const MIST_MORNING = [0.20342, -0.13347, -0.62789, -0.00341, -0.20227, -0.01995, 0.74347, -17.60958];
@@ -63,6 +64,9 @@ export function forecastMornings(hourly, place, now = Date.now()) {
     const hasEvening = midnight >= 6, hasMorning = midnight + 12 <= h.time.length;
     if (!time.endsWith('T00:00') || !hasEvening || !hasMorning) return [];
     if (time.slice(0, 10) + 'T12' <= hourNow) return [];
+    // A morning with a gap anywhere from 18 h the day before to 11 h is left out. Open-Meteo sends null for a missing value.
+    const missing = value => value == null || Number.isNaN(value);
+    if (VARIABLES.some(key => h[key].slice(midnight - 6, midnight + 12).some(missing))) return [];
 
     const morning = key => h[key].slice(midnight + 4, midnight + 10);   // 04 to 09 h
     const evening = key => h[key].slice(midnight - 6, midnight - 3);    // 18 to 20 h the day before
@@ -93,9 +97,8 @@ export function forecastMornings(hourly, place, now = Date.now()) {
       return hasMist ? {hour, mist: chance(MIST_HOUR, [...hourInputs, ...morningInputs, logOdds(place.mistByHour[k])], mistShift), fog} : {hour, fog};
     });
 
-    const incomplete = [...morningInputs, ...hours.map(x => x.fog), ...hours.map(x => x.mist ?? 0)].some(Number.isNaN);
     const fog = chance(weights.morning, [...morningInputs, fogUsual], fogShift);
     const morningChances = hasMist ? {mist: chance(MIST_MORNING, [...morningInputs, logOdds(place.mist)], mistShift), fog} : {fog};
-    return incomplete ? [] : [{date: time.slice(0, 10), hours, ...morningChances}];
+    return [{date: time.slice(0, 10), hours, ...morningChances}];
   });
 }

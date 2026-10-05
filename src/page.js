@@ -1,8 +1,6 @@
 // Turns the weather forecast for one place into the rows of fog and mist chances on its page.
 // The forecast is ICON-EU unless the place names another model (ICON-EU stops at Europe, so US places use icon_global).
-import {forecastMornings} from './model.js';
-
-const VARIABLES = 'relative_humidity_2m,temperature_2m,dew_point_2m,wind_speed_10m,precipitation,cloud_cover';
+import {forecastMornings, VARIABLES} from './model.js';
 
 const percent = p => Math.round(100 * p) + '%';
 
@@ -79,7 +77,7 @@ function updatedHtml(lang, now) {
 
 export const forecastUrl = place =>
   `https://api.open-meteo.com/v1/forecast?latitude=${place.lat}&longitude=${place.lon}`
-  + `&hourly=${VARIABLES}&models=${place.model ?? 'icon_eu'}&timezone=${place.tz}&past_days=1&forecast_days=4`;
+  + `&hourly=${VARIABLES.join(',')}&models=${place.model ?? 'icon_eu'}&timezone=${place.tz}&past_days=1&forecast_days=4`;
 
 // The rows for one place, from the "hourly" block of the Open-Meteo answer to `forecastUrl`.
 export function forecastHtml(hourly, place, lang = 'en', now = Date.now()) {

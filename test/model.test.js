@@ -38,7 +38,8 @@ test('goes by the clock at the place, not the viewer\'s', () => {
 });
 
 test('leaves out a morning with missing weather values', () => {
-  const gap = {...hourly, cloud_cover: hourly.cloud_cover.map((value, i) => i === 24 + 6 ? NaN : value)};
+  // Open-Meteo sends null for a missing value.
+  const gap = {...hourly, cloud_cover: hourly.cloud_cover.map((value, i) => i === 24 + 6 ? null : value)};
   const dates = forecast => forecast.map(m => m.date);
   const all = forecastMornings(hourly, munich, Date.parse(now));
   assert.deepEqual(dates(forecastMornings(gap, munich, Date.parse(now))), dates(all).slice(1));
