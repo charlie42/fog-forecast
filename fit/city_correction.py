@@ -32,6 +32,9 @@ ADDED_LATER = [
     ('icon_global', keep_test.SUMMER, False, [('NZAA', 'Auckland', 'Pacific/Auckland'),
                                               ('NZCH', 'Christchurch', 'Pacific/Auckland')]),
 ]
+# The cities added on 5 October 2026, all tested with the humidity condition. A list of its own: the tests of the
+# later mornings were made on the 13 cities of ADDED_LATER.
+BY_COUNTRY = [('icon_eu', WINTER, True, keep_test.GROUPS[group][2]) for group in keep_test.BY_COUNTRY]
 STRENGTH = 0.5
 
 
@@ -46,10 +49,10 @@ def tempelhof():
 
 
 def site_tables(europe):
-    """For each of the 22 cities: its morning table, and the mornings its usual rates come from."""
+    """For each city with the formula "europe": its morning table, and the mornings its usual rates come from."""
     berlin, record = tempelhof()
     tables = [(berlin, record)] + [(europe[europe.city == city], europe[europe.city == city]) for city in FITTING_CITIES_SHOWN]
-    for model, months, near_saturation, stations in ADDED_LATER:
+    for model, months, near_saturation, stations in ADDED_LATER + BY_COUNTRY:
         table, _, _ = keep_test.load_group(model, months, stations, near_saturation)
         tables += [(table[table.city == city], table[table.city == city]) for _, city, _ in stations]
     return tables

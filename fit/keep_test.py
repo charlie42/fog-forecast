@@ -1,14 +1,18 @@
 """Test for a new city: does the page's formula beat the airport's own usual rate?
 
-Run: python keep_test.py europe        (or: north, south, us, nearer-europe, nearer-us, city-stations; no argument runs all)
+Run: python keep_test.py europe        (or: north, south, us, nearer-europe, nearer-us, germany, poland, netherlands,
+                                        uk, italy-north, city-stations; no argument runs all)
 The weights from fit_morning.py are used as they are. Only the usual rate comes from the airport, taken
 from its other months. A city is kept if the fog skill is at least 10%, the 90% range (months resampled)
 stays above zero, and there are at least 15 fog mornings. Mist skill is printed alongside.
 Entries for the city list (usual rates for the morning and for each hour 03 to 11 h) are printed for the cities that pass.
 Inputs come from the ICON-EU model in Europe and from the worldwide ICON model elsewhere.
-The airport reports are visibility alone, as when the weights were fitted, except in the two "nearer" groups.
-Those are airports nearer the city centre than the one first tested, and were tested after the humidity
-condition came in: fog and mist count there only in air within 2 C of saturation.
+The airport reports are visibility alone, as when the weights were fitted, except in the groups tested after the
+humidity condition came in: fog and mist count there only in air within 2 C of saturation. Those are the two
+"nearer" groups (airports nearer the city centre than the one first tested) and the five groups by country, which
+hold the cities that passed out of 45 airfields in Germany, 46 in Poland, the Netherlands and the United Kingdom and
+16 in northern Italy and have at least 100,000 people and the station within about 20 km (Friedrichshafen and
+Treviso are smaller).
 "city-stations" compares the weather station inside Munich with the one at its airport, both from the
 German weather service, with one visibility reading per hour. No entries are printed for that group."""
 import json
@@ -49,8 +53,24 @@ GROUPS = {
     'nearer-us': ('icon_global', WINTER, [
         ('SAC', 'Sacramento Executive', 'America/Los_Angeles'), ('BFI', 'Seattle Boeing Field', 'America/Los_Angeles'),
         ('HOU', 'Houston Hobby', 'America/Chicago')]),
+    'germany': ('icon_eu', WINTER, [(station, city, 'Europe/Berlin') for station, city in [
+        ('EDDS', 'Stuttgart'), ('EDDP', 'Leipzig'), ('EDDV', 'Hanover'), ('EDDW', 'Bremen'), ('EDFM', 'Mannheim'),
+        ('ETOU', 'Wiesbaden'), ('EDMA', 'Augsburg'), ('EDLN', 'Mönchengladbach'), ('EDVE', 'Braunschweig'), ('EDHK', 'Kiel'),
+        ('EDHL', 'Lübeck'), ('EDDE', 'Erfurt'), ('EDVK', 'Kassel'), ('EDDR', 'Saarbrücken'), ('ETSI', 'Ingolstadt'),
+        ('EDDG', 'Münster'), ('ETHL', 'Ulm'), ('ETNL', 'Rostock'), ('EDNY', 'Friedrichshafen')]]),
+    'poland': ('icon_eu', WINTER, [(station, city, 'Europe/Warsaw') for station, city in [
+        ('EPWR', 'Wroclaw'), ('EPLL', 'Lodz'), ('EPPO', 'Poznan'), ('EPGD', 'Gdansk'), ('EPLB', 'Lublin'),
+        ('EPBY', 'Bydgoszcz'), ('EPRA', 'Radom'), ('EPRZ', 'Rzeszow')]]),
+    'netherlands': ('icon_eu', WINTER, [(station, city, 'Europe/Amsterdam') for station, city in [
+        ('EHRD', 'Rotterdam'), ('EHGG', 'Groningen'), ('EHEH', 'Eindhoven'), ('EHGR', 'Breda'), ('EHDL', 'Arnhem'),
+        ('EHLW', 'Leeuwarden')]]),
+    'uk': ('icon_eu', WINTER, [(station, city, 'Europe/London') for station, city in [
+        ('EGBB', 'Birmingham'), ('EGSH', 'Norwich'), ('EGGP', 'Liverpool'), ('EGPF', 'Glasgow'), ('EGCC', 'Manchester')]]),
+    'italy-north': ('icon_eu', WINTER, [(station, city, 'Europe/Rome') for station, city in [
+        ('LIPO', 'Brescia'), ('LIPH', 'Treviso'), ('LIPI', 'Udine'), ('LIPR', 'Rimini')]]),
 }
-NEAR_SATURATION = ('nearer-europe', 'nearer-us')
+BY_COUNTRY = ('germany', 'poland', 'netherlands', 'uk', 'italy-north')
+NEAR_SATURATION = ('nearer-europe', 'nearer-us') + BY_COUNTRY
 GROUPS['city-stations'] = ('icon_eu', WINTER, [
     ('03379', 'Munich city', 'Europe/Berlin'), ('01262', 'Munich airport', 'Europe/Berlin')])
 GERMAN_WEATHER_SERVICE = ('city-stations',)

@@ -31,6 +31,8 @@ HOURS = range(3, 12)
 # The archive lists these three airports at the town, 7 to 16 km from the runway, which is another
 # cell of the worldwide ICON model. Positions from OurAirports.
 POSITION = {'VIAR': (31.7096, 74.7973), 'OPST': (32.5359, 74.3646), 'OPPS': (33.9939, 71.5146)}
+# And these two in another place altogether: Lublin 477 km from its airport, Braunschweig 8 km. Positions from aviationweather.gov.
+POSITION.update({'EPLB': (51.2403, 22.7136), 'EDVE': (52.319, 10.558)})
 
 FORECAST_VARIABLES = ['relative_humidity_2m', 'temperature_2m', 'dew_point_2m',
                       'wind_speed_10m', 'precipitation', 'cloud_cover']
