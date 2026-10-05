@@ -34,7 +34,7 @@
 <h2>How the forecast is made</h2>
 <p>The forecast is a formula (a logistic regression). Its inputs are the weather model's data for the morning, such as humidity and wind, and its result is a chance of fog. The formula was fitted on two and a half winters of forecasts from the ICON weather model, put next to the visibility measured at weather stations, mostly airports. Weather services use the same method for local forecasts, under the name model output statistics. The method and all test results are <a href="https://github.com/charlie42/fog-forecast/blob/main/HOW-IT-WORKS.md">on GitHub</a>.</p>
 
-<p>The weather model's data exist for any place, so on a city page the formula is used with the data for the city centre. The link between weather and fog found at the station is taken to hold a few kilometres away as well.</p>
+<p>The formula was fitted at airports, but the forecast on a city page is for the city centre. The weather model has humidity, wind and the rest for every point on the map, so for a city page the formula gets the numbers for the centre in place of those for the airport. The assumption is that the weather that makes fog at the airport makes fog in the centre too, a few kilometres away.</p>
 
 <h2>How it was tested</h2>
 <p>The test was done at the stations, because visibility is measured only there. The station is written on each city's page. For each morning, the forecast made the day before for the station was compared with the visibility measured there.</p>
