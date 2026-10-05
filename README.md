@@ -1,6 +1,6 @@
 # Fog forecast
 
-Chance of fog and mist on each of the next mornings, hour by hour, for 25 cities in Europe, the United States, New Zealand, India and Pakistan. Meant for photographers; it says nothing about road or flight conditions.
+Chance of fog and mist on each of the next mornings, hour by hour, for 67 cities in Europe, the United States, New Zealand, India and Pakistan. Meant for photographers; it says nothing about road or flight conditions.
 
 Live at https://chanceoffog.com/
 
