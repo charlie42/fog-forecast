@@ -23,8 +23,13 @@ const FOG_MORNING = [0.20864, -0.16897, -0.9078, -0.00993, -0.51486, 0.15244, 0.
 // Weights in the order of `hourInputs` below, then the morning inputs, the usual rate for that hour, the constant.
 const MIST_HOUR = [0.06398, -0.04304, -0.22212, -0.37503, -0.00105, 0.10844, -0.07628, -0.58067, -0.0043, -0.22331, -0.05695, 0.63314, -14.54606];
 const FOG_HOUR = [0.08938, -0.07122, -0.18994, -1.71141, -0.00463, 0.12664, -0.08299, -0.48341, -0.00778, -0.43345, 0.1027, 0.38806, -19.6028];
+// Two and three days on, fog comes less often than the day-ahead weights say: on the mornings they gave 50% or more (60% on
+// average), fog came on 50% and on 46%. So the log-odds of the morning fog chance are left at this share of their distance
+// from the log-odds of the usual rate, by the days from today at the place to the morning (the last value for any later one).
+// Measured for the morning fog chance of these weights only: mist, the single hours and the other formula are left as they are.
+const FOG_KEEP = [1, 1, 0.925, 0.85, 0.8];
 const FOG = {
-  europe: {morning: FOG_MORNING, hour: FOG_HOUR},
+  europe: {morning: FOG_MORNING, hour: FOG_HOUR, keep: FOG_KEEP},
   'south-asia': {
     morning: [0.1186, -0.32356, -0.33073, -0.00087, -0.17779, 0.09388, 0.61746, -9.1773],
     hour: [0.03717, 0.05719, -0.07356, -0.47209, -0.00025, 0.06408, -0.30485, -0.34898, -0.00045, -0.21919, 0.07106, 0.67869, -7.41126],
@@ -44,8 +49,9 @@ const sum = values => values.reduce((a, b) => a + b, 0);
 const mean = values => sum(values) / values.length;
 const logOdds = p => Math.log(p / (1 - p));
 const clamp = (value, low, high) => Math.min(Math.max(value, low), high);
-const chance = (weights, inputs, shift = 0) =>
-  1 / (1 + Math.exp(-inputs.reduce((z, value, k) => z + weights[k] * value, weights[inputs.length] + shift)));
+const fromLogOdds = z => 1 / (1 + Math.exp(-z));
+const score = (weights, inputs, shift = 0) => inputs.reduce((z, value, k) => z + weights[k] * value, weights[inputs.length] + shift);
+const chance = (weights, inputs, shift) => fromLogOdds(score(weights, inputs, shift));
 
 // The date and hour on the clock at a place, e.g. "2026-10-04T13", whatever the viewer's own time zone.
 export function clockAt(tz) {
@@ -69,16 +75,18 @@ export const dayBefore = (date, days = 1) => new Date(Date.parse(date) - days * 
  *                `mistShift` and `fogShift`, where given, are added to the log-odds of the morning chance and of
  *                each hour's chance. They are half of the constant that would make the average chance at the
  *                place over its past mornings equal to how often mist or fog came.
+ *                With the formula "europe" the morning fog chance of a morning two or more days after today at the
+ *                place is then pulled toward the usual rate (FOG_KEEP).
  *                `fogBefore` says for the last mornings whether they were fog mornings at the airport, e.g.
  *                {"2026-01-09": true, "2026-01-10": false}. It is put in when the site is built (reports.js) and
  *                only counts where the formula has weights for it. A morning with none of the four mornings
  *                before it in there gets the weights without.
- * @param now     Mornings are left out once it is noon at the place.
+ * @param now     Mornings are left out once it is noon at the place. Days to a morning are counted from the date there.
  * @returns       One entry per morning: {date, mist, fog, hours: [{hour, mist, fog}]}, chances from 0 to 1;
  *                no `mist` for a place without mist rates.
  */
 export function forecastMornings(hourly, place, now = Date.now()) {
-  const clock = clockAt(place.tz), hourNow = clock(now);
+  const clock = clockAt(place.tz), hourNow = clock(now), today = hourNow.slice(0, 10);
   const weights = FOG[place.formula ?? 'europe'], hasMist = place.mist !== undefined;
   const mistShift = place.mistShift ?? 0, fogShift = place.fogShift ?? 0;
   const fogBefore = place.fogBefore ?? {};
@@ -135,7 +143,9 @@ export function forecastMornings(hourly, place, now = Date.now()) {
       return hasMist ? {hour, mist: chance(MIST_HOUR, [...hourInputs, ...morningInputs, logOdds(place.mistByHour[k])], mistShift), fog} : {hour, fog};
     });
 
-    const fog = chance(fogWeights.morning, [...morningInputs, ...before, fogUsual], fogShift);
+    const daysOn = Math.round((Date.parse(date) - Date.parse(today)) / 864e5);
+    const keep = weights.keep?.[Math.min(daysOn, weights.keep.length - 1)] ?? 1;
+    const fog = fromLogOdds(fogUsual + keep * (score(fogWeights.morning, [...morningInputs, ...before, fogUsual], fogShift) - fogUsual));
     const morningChances = hasMist ? {mist: chance(MIST_MORNING, [...morningInputs, logOdds(place.mist)], mistShift), fog} : {fog};
     return [{date, hours, ...morningChances}];
   });

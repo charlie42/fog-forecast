@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {forecastMornings, VARIABLES} from '../src/model.js';
 
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url)));
+const dayBeforeOf = date => new Date(Date.parse(date) - 864e5).toISOString().slice(0, 10);
 const munich = read('../cities.json').find(city => city.name === 'Munich');
 const {now, hourly} = read('munich-forecast.json');   // an Open-Meteo response saved on 4 October 2026
 
@@ -18,12 +19,29 @@ test('gives the reference chances for a saved Munich forecast', () => {
 test('adds the correction of the place to the log-odds of every chance', () => {
   const {mistShift, fogShift, ...uncorrected} = munich;
   const logOdds = p => Math.log(p / (1 - p));
-  const all = place => forecastMornings(hourly, place, Date.parse(now)).flatMap(m => [m, ...m.hours]);
+  // The pull of the later mornings comes after the correction, so their morning fog chance keeps that share of it.
+  const all = place => forecastMornings(hourly, place, Date.parse(now)).flatMap((m, row) => [{...m, keep: [1, 1, 0.925, 0.85][row]}, ...m.hours]);
   const before = all(uncorrected);
   all(munich).forEach((after, i) => {
     assert.ok(Math.abs(logOdds(after.mist) - logOdds(before[i].mist) - mistShift) < 1e-9);
-    assert.ok(Math.abs(logOdds(after.fog) - logOdds(before[i].fog) - fogShift) < 1e-9);
+    assert.ok(Math.abs(logOdds(after.fog) - logOdds(before[i].fog) - fogShift * (after.keep ?? 1)) < 1e-9);
   });
+});
+
+test('pulls the morning fog chance toward the usual rate two and three days on, and nothing else', () => {
+  const logOdds = p => Math.log(p / (1 - p)), usual = logOdds(munich.fog);
+  // The same morning of the same saved forecast, seen from the day before (no pull) and from two or three days before.
+  const seenFrom = (day, date, place = munich, from = hourly) => forecastMornings(from, place, Date.parse(`${day}T06:00:00Z`)).find(m => m.date === date);
+  for (const [day, date, keep] of [['2026-10-04', '2026-10-06', 0.925], ['2026-10-04', '2026-10-07', 0.85], ['2026-10-05', '2026-10-07', 0.925]]) {
+    const plain = seenFrom(dayBeforeOf(date), date), pulled = seenFrom(day, date);
+    assert.ok(Math.abs(logOdds(pulled.fog) - usual - keep * (logOdds(plain.fog) - usual)) < 1e-9);
+    assert.deepEqual({...pulled, fog: 0}, {...plain, fog: 0});   // mist and the single hours are the same
+  }
+  assert.deepEqual(seenFrom('2026-10-04', '2026-10-05'), seenFrom('2026-10-05', '2026-10-05'));   // tomorrow is as today
+  // The formula for South Asia has no pull.
+  const delhi = read('../cities.json').find(city => city.name === 'Delhi'), saved = read('delhi-forecast.json');
+  const last = forecastMornings(saved.hourly, delhi, Date.parse(saved.now)).at(-1).date;
+  assert.deepEqual(seenFrom(saved.now.slice(0, 10), last, delhi, saved.hourly), seenFrom(dayBeforeOf(last), last, delhi, saved.hourly));
 });
 
 test('leaves out mornings that are over', () => {
