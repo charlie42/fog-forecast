@@ -1,4 +1,5 @@
-"""Are fancier models better than the logistic regression of the site? No: at a city they did not learn from, they are worse.
+"""Are fancier models better than the logistic regression of the site? No.
+At a city they did not learn from, they are no better for fog and worse for mist.
 
 Run: pip install xgboost, then python compare_models.py (about 40 minutes on 8 cores)
 Boosting, forests and a logistic regression with its strength searched get the same seven inputs.
