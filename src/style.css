@@ -29,6 +29,7 @@ summary { width: max-content; cursor: pointer; }
 nav { margin-top: 2em; padding-top: 1em; border-top: 1px solid var(--rule); }
 .cities { margin: 0; padding: 0; list-style: none; line-height: 1.7; }
 nav .cities { columns: 4 7em; font-size: .9em; }
+footer { margin-top: 2em; }
 
 article { line-height: 1.55; }
 article h2 { margin: 1.6em 0 0; font-size: 1em; }
