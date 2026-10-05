@@ -2,7 +2,7 @@
 
 ## How the number is made
 
-The page asks [Open-Meteo](https://open-meteo.com/) for the ICON-EU forecast at one site per city (the worldwide ICON forecast for the cities outside Europe, which ICON-EU does not reach) and takes six things from it:
+The page asks [Open-Meteo](https://open-meteo.com/) for the ICON-EU forecast for the centre of each city (the worldwide ICON forecast for the cities outside Europe, which ICON-EU does not reach) and takes six things from it:
 
 - highest humidity between 4 and 10 h
 - mean wind in those hours
@@ -14,6 +14,8 @@ The page asks [Open-Meteo](https://open-meteo.com/) for the ICON-EU forecast at 
 A logistic regression turns those, plus how often the site usually has fog, into a chance. There are four sets of weights: fog and mist, each for a whole morning and for a single hour. Fog means visibility under 1 km and mist under 5 km, in air close to saturation: the temperature reported by the airport is within 2 °C of the dew point. Smoke, haze and dry smog are left out that way. A report with rain, snow, drizzle or other precipitation is not counted as mist or fog. A morning counts when mist or fog is reported in at least two of the six hours from 4 to 10 h.
 
 The weights were fitted once on 14 European airports together. A new place needs its usual fog and mist rates from its own visibility record, and one correction for each.
+
+The weather values are taken for the centre of each city. The usual rates, the corrections and the tests are from the station named on the page, where the visibility is reported, and the tests were run with the weather values for the station. At seven cities with a second station nearer the centre, fog skill at that station was 19% with the weather values for its own grid square and 9% with the airport's.
 
 At some places the average is off: at Houston the weights give 3% for fog where fog comes on 8% of mornings, and at Zurich 19% where it comes on 13%. Each city except Delhi, Lahore and Amritsar therefore has a correction for fog and one for mist, added to the morning chance and to each hour. It is half of what would make the average equal to how often fog came. Half, because the full correction did no better in the test and overstated the high chances more.
 
