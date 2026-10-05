@@ -10,8 +10,9 @@
 // 5 km on almost every winter morning. Fog there is so tied to the season (Delhi: 3% of October mornings, 73%
 // in January) that the usual rate fed in is the one for the calendar month. Their weights and rates count an
 // hour under 1 km as fog only if the air was within 2 C of saturation, which leaves dry smog out.
-// Fog there comes in runs of days, so the formula has two more sets of weights with one more input: whether the airport
-// had a fog morning one morning before, or two mornings before. A morning takes the newest of the two that is known.
+// Fog there comes in runs of days, so the formula has four more sets of weights with one more input: whether the airport
+// had a fog morning one morning before, or two, three or four mornings before. A morning takes the newest of the four that
+// is known. Four mornings before reach the last row of a page.
 
 export const HOURS = [3, 4, 5, 6, 7, 8, 9, 10, 11];
 export const VARIABLES = ['relative_humidity_2m', 'temperature_2m', 'dew_point_2m', 'wind_speed_10m', 'precipitation', 'cloud_cover'];
@@ -27,12 +28,16 @@ const FOG = {
   'south-asia': {
     morning: [0.1186, -0.32356, -0.33073, -0.00087, -0.17779, 0.09388, 0.61746, -9.1773],
     hour: [0.03717, 0.05719, -0.07356, -0.47209, -0.00025, 0.06408, -0.30485, -0.34898, -0.00045, -0.21919, 0.07106, 0.67869, -7.41126],
-    // With the fog morning one morning before, then two mornings before. Its weight (for 1 or 0) comes before the usual rate's.
+    // With the fog morning one morning before, then two, three and four mornings before. Its weight (for 1 or 0) comes before the usual rate's.
     before: [
       {morning: [0.11541, -0.29658, -0.19685, 0.00035, -0.09007, 0.06782, 1.78292, 0.46883, -10.24681],
        hour: [0.00169, 0.04239, -0.29868, -0.52255, -0.00116, 0.05932, -0.24829, -0.1667, 0.00093, -0.10344, 0.01541, 1.63902, 0.54082, -4.86023]},
       {morning: [0.12052, -0.31095, -0.28529, -0.00045, -0.12103, 0.09384, 1.32845, 0.48694, -10.38992],
-       hour: [0.04128, 0.03747, -0.07582, -0.51848, -0.0007, 0.05959, -0.26047, -0.26188, -0.00011, -0.1515, 0.05541, 1.10766, 0.56775, -8.38151]}]},
+       hour: [0.04128, 0.03747, -0.07582, -0.51848, -0.0007, 0.05959, -0.26047, -0.26188, -0.00011, -0.1515, 0.05541, 1.10766, 0.56775, -8.38151]},
+      {morning: [0.12161, -0.31559, -0.28135, -0.00085, -0.13046, 0.08692, 0.96663, 0.51723, -10.1949],
+       hour: [0.03948, 0.05311, -0.07823, -0.54602, -0.00033, 0.06499, -0.28279, -0.23689, -0.00068, -0.16381, 0.06117, 0.8027, 0.59494, -8.46891]},
+      {morning: [0.12038, -0.31564, -0.29571, -0.00043, -0.14631, 0.09249, 0.704, 0.54149, -9.89632],
+       hour: [0.03932, 0.05, -0.07436, -0.51201, -0.00065, 0.0642, -0.2872, -0.2813, 2e-05, -0.17508, 0.05779, 0.65968, 0.60867, -8.19591]}]},
 };
 
 const sum = values => values.reduce((a, b) => a + b, 0);
@@ -51,7 +56,7 @@ export function clockAt(tz) {
   };
 }
 
-export const dayBefore = date => new Date(Date.parse(date) - 864e5).toISOString().slice(0, 10);
+export const dayBefore = (date, days = 1) => new Date(Date.parse(date) - days * 864e5).toISOString().slice(0, 10);
 
 /**
  * @param hourly  The "hourly" block of an Open-Meteo forecast with `time` in seconds since 1970 (timeformat=unixtime), and
@@ -66,7 +71,7 @@ export const dayBefore = date => new Date(Date.parse(date) - 864e5).toISOString(
  *                place over its past mornings equal to how often mist or fog came.
  *                `fogBefore` says for the last mornings whether they were fog mornings at the airport, e.g.
  *                {"2026-01-09": true, "2026-01-10": false}. It is put in when the site is built (reports.js) and
- *                only counts where the formula has weights for it. A morning with neither of the two mornings
+ *                only counts where the formula has weights for it. A morning with none of the four mornings
  *                before it in there gets the weights without.
  * @param now     Mornings are left out once it is noon at the place.
  * @returns       One entry per morning: {date, mist, fog, hours: [{hour, mist, fog}]}, chances from 0 to 1;
@@ -111,9 +116,9 @@ export function forecastMornings(hourly, place, now = Date.now()) {
     const fogUsualAt = k => monthRate === undefined ? logOdds(place.fogByHour[k])
       : logOdds(clamp(place.fogByHour[k] * monthRate / place.fog, 0.005, 0.97));
 
-    // The newest known of the two mornings before, where the formula has weights for it.
-    const earlier = [dayBefore(date), dayBefore(dayBefore(date))];
-    const lag = weights.before ? earlier.findIndex(day => typeof fogBefore[day] === 'boolean') : -1;
+    // The newest known of the mornings before that the formula has weights for.
+    const earlier = (weights.before ?? []).map((_, k) => dayBefore(date, k + 1));
+    const lag = earlier.findIndex(day => typeof fogBefore[day] === 'boolean');
     const fogWeights = lag < 0 ? weights : weights.before[lag];
     const before = lag < 0 ? [] : [Number(fogBefore[earlier[lag]])];
 

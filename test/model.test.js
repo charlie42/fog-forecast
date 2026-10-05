@@ -54,16 +54,16 @@ test('gives the reference fog chances for Delhi, which has weights of its own, a
   assert.ok(mornings.every(m => !('mist' in m) && m.hours.every(x => !('mist' in x))));
 });
 
-test('takes in the newest known of the two mornings before, where the formula has weights for it', () => {
+test('takes in the newest known of the four mornings before, where the formula has weights for it', () => {
   const delhi = read('../cities.json').find(city => city.name === 'Delhi');
   const saved = read('delhi-forecast.json');
   const percent = p => Math.round(100 * p);
   const chances = place => forecastMornings(saved.hourly, place, Date.parse(saved.now))
     .map(m => ({fog: percent(m.fog), fogHours: m.hours.map(x => percent(x.fog))}));
-  // Reference chances for two sets of known mornings: between them one and two mornings before, with fog and without, and neither.
+  // Reference chances for three sets of known mornings: between them one to four mornings before, with fog and without, and none.
   for (const {fogBefore, mornings} of read('delhi-before-expected.json')) assert.deepEqual(chances({...delhi, fogBefore}), mornings);
   // The morning itself and mornings further back do not count, and no place in Europe takes any of it in.
-  assert.deepEqual(chances({...delhi, fogBefore: {'2026-01-07': true, '2026-01-13': true}}).slice(0, 3), chances(delhi).slice(0, 3));
+  assert.deepEqual(chances({...delhi, fogBefore: {'2026-01-05': true, '2026-01-13': true}}).slice(0, 3), chances(delhi).slice(0, 3));
   const all = place => forecastMornings(hourly, place, Date.parse(now));
   assert.deepEqual(all({...munich, fogBefore: {'2026-10-04': true, '2026-10-05': true}}), all(munich));
 });
