@@ -9,6 +9,7 @@ Python scripts that fit the logistic-regression weights in `../src/model.js`.
 | `fit_south_asia.py` | the `south-asia` morning and hour weights, without and with the fog morning one to four mornings before, with the test for Delhi, Lahore and Amritsar |
 | `keep_test.py` | the test for a new city, and its entry for the city list |
 | `city_correction.py` | `mistShift` and `fogShift` for the city list: half of the constant that makes the average chance at a city equal to how often mist or fog came |
+| `compare_models.py` | the comparison with boosting, forests and XGBoost on the same inputs |
 | `common.py` | downloads, the six morning inputs, conversion of weights to raw units |
 
 Weights are printed in the order used in `model.js`: one per input, then the usual rate (log-odds), then the constant.
@@ -22,6 +23,7 @@ python fit_hourly.py
 python fit_south_asia.py
 python keep_test.py europe          # or: north, south, us, nearer-europe, nearer-us, city-stations
 python city_correction.py
+pip install xgboost && python compare_models.py   # about 40 minutes on 8 cores
 ```
 
 ## Data
