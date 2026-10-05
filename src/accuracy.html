@@ -31,12 +31,15 @@
 
 <p>Above 50% the forecast was too high: mornings with a chance of about 76% had fog 65% of the time.</p>
 
+<h2>How the forecast is made</h2>
+<p>The forecast is a formula (a logistic regression). Its inputs are the weather model's data for the morning, such as humidity and wind, and its result is a chance of fog. The formula was fitted on two and a half winters of forecasts from the ICON weather model, put next to the visibility measured at weather stations, mostly airports. Weather services use the same method for local forecasts, under the name model output statistics. The method and all test results are <a href="https://github.com/charlie42/fog-forecast/blob/main/HOW-IT-WORKS.md">on GitHub</a>.</p>
+
+<p>The weather model's data exist for any place, so on a city page the formula is used with the data for the city centre. The link between weather and fog found at the station is taken to hold a few kilometres away as well.</p>
+
 <h2>How it was tested</h2>
-<p>For each morning, the forecast made the day before was compared with what was measured. The forecast is a formula fitted on past winters. To keep the test fair, each winter was tested with a formula fitted on the other winters only, so every morning of the test was new to its formula.</p>
+<p>The test was done at the stations, because visibility is measured only there. The station is written on each city's page. For each morning, the forecast made the day before for the station was compared with the visibility measured there.</p>
 
-<p>A forecast like this needs two things. One is the weather model's data, such as humidity and wind, which exist for any place. The other is visibility measurements, which exist only at weather stations, mostly airports. So the formula was fitted and tested at the stations, where a forecast can be compared with what was measured. The station is written on each city's page.</p>
-
-<p>On a city page the same formula is used with the weather model's data for the city centre. The link between weather and fog found at the station is taken to hold a few kilometres away as well.</p>
+<p>To keep the test fair, each winter was tested with a formula fitted on the other winters only, so every morning of the test was new to its formula.</p>
 
 <p>A morning was counted as foggy when, in at least two of the six hours from 4 to 10 h, visibility was under 1 km with no rain, snow or drizzle. The mornings are from October to March, and from April to September in New Zealand.</p>
 
@@ -54,9 +57,6 @@
 <p>A day ahead the forecast of this site was a little ahead: it caught 90 of the fog mornings, and the airport forecast issued about 21 hours before caught 81. Airport forecasts are written for flight planning and renewed every six hours, and they are cautious about fog at their far end. The next airport forecast, issued about 15 hours before with six more hours of information, was level: it caught 116, against 112.</p>
 
 <p>For the same comparison in Europe, airport forecasts are saved daily since October 2026.</p>
-
-<h2>How the percentage is made</h2>
-<p>The method is one that weather services use for local forecasts, called model output statistics. Two and a half winters of forecasts from the ICON weather model were put next to the visibility measured at airports, and a formula (a logistic regression) was fitted to them. The method and all test results are <a href="https://github.com/charlie42/fog-forecast/blob/main/HOW-IT-WORKS.md">on GitHub</a>.</p>
 </article>
 </main>
 </body>
