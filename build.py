@@ -22,7 +22,7 @@ AND = {'en': ' and ', 'de': ' und ', 'it': ' e '}
 # The usual rates in cities.json are for the foggier half of the year: north of the equator, then south of it.
 SEASON = {'en': ['October to March', 'April to September'], 'de': ['Oktober bis März', 'April bis September'],
           'it': ['ottobre a marzo', 'aprile a settembre']}
-PLACE_KEYS = ['lat', 'lon', 'tz', 'model', 'formula', 'rare', 'mist', 'fog', 'mistShift', 'fogShift', 'mistByHour', 'fogByMonth', 'fogByHour']   # what page.js and model.js need; model, formula and rare only where they differ from the usual
+PLACE_KEYS = ['lat', 'lon', 'tz', 'model', 'formula', 'rare', 'mist', 'fog', 'mistShift', 'fogShift', 'mistByHour', 'fogByMonth', 'fogByHour', 'fogBefore']   # what page.js and model.js need; model, formula and rare only where they differ from the usual
 
 
 def percent(share):
@@ -116,6 +116,11 @@ def main():
     # The forecast rows come from prerender.js. Without them the pages start empty and fill in once opened.
     made = ROOT / 'forecasts.json'
     forecasts = json.loads(made.read_text(encoding='utf-8')) if made.exists() else {}
+    # Whether the last mornings had fog at the airport, also from prerender.js, for the cities whose formula takes that in.
+    # It goes into the page so that the rows worked out in the browser are the same as the ones from the build.
+    made = ROOT / 'reports.json'
+    before = json.loads(made.read_text(encoding='utf-8')) if made.exists() else {}
+    cities = [{**city, 'fogBefore': before[city['name']]} if city['name'] in before else city for city in cities]
     urls = []
     for lang in LANGUAGES:
         having = [c for c in cities if in_language(c, lang)]
