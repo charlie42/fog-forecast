@@ -11,8 +11,9 @@ The airport reports are visibility alone, as when the weights were fitted, excep
 humidity condition came in: fog and mist count there only in air within 2 C of saturation. Those are the two
 "nearer" groups (airports nearer the city centre than the one first tested) and the five groups by country, which
 hold the cities that passed out of 45 airfields in Germany, 46 in Poland, the Netherlands and the United Kingdom and
-16 in northern Italy and have at least 100,000 people and the station within about 20 km (Friedrichshafen and
-Treviso are smaller).
+16 in northern Italy and have at least 100,000 people and the station within about 20 km (Friedrichshafen is
+smaller). Four that passed narrowly have no page and are not in the groups: Liverpool and Manchester (15 fog
+mornings each), Glasgow (range from 5%) and Treviso (range from 1%).
 "city-stations" compares the weather station inside Munich with the one at its airport, both from the
 German weather service, with one visibility reading per hour. No entries are printed for that group."""
 import json
@@ -65,9 +66,9 @@ GROUPS = {
         ('EHRD', 'Rotterdam'), ('EHGG', 'Groningen'), ('EHEH', 'Eindhoven'), ('EHGR', 'Breda'), ('EHDL', 'Arnhem'),
         ('EHLW', 'Leeuwarden')]]),
     'uk': ('icon_eu', WINTER, [(station, city, 'Europe/London') for station, city in [
-        ('EGBB', 'Birmingham'), ('EGSH', 'Norwich'), ('EGGP', 'Liverpool'), ('EGPF', 'Glasgow'), ('EGCC', 'Manchester')]]),
+        ('EGBB', 'Birmingham'), ('EGSH', 'Norwich')]]),
     'italy-north': ('icon_eu', WINTER, [(station, city, 'Europe/Rome') for station, city in [
-        ('LIPO', 'Brescia'), ('LIPH', 'Treviso'), ('LIPI', 'Udine'), ('LIPR', 'Rimini')]]),
+        ('LIPO', 'Brescia'), ('LIPI', 'Udine'), ('LIPR', 'Rimini')]]),
 }
 BY_COUNTRY = ('germany', 'poland', 'netherlands', 'uk', 'italy-north')
 NEAR_SATURATION = ('nearer-europe', 'nearer-us') + BY_COUNTRY
