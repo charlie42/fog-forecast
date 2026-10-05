@@ -11,11 +11,11 @@ The page asks [Open-Meteo](https://open-meteo.com/) for the ICON-EU forecast for
 - how far the evening air is from saturation (temperature minus dew point)
 - how much it cools overnight
 
-A logistic regression turns those, plus how often the site usually has fog, into a chance. There are four sets of weights: fog and mist, each for a whole morning and for a single hour. Fog means visibility under 1 km and mist under 5 km, in air close to saturation: the temperature reported by the airport is within 2 °C of the dew point. Smoke, haze and dry smog are left out that way. A report with rain, snow, drizzle or other precipitation is not counted as mist or fog. A morning counts when mist or fog is reported in at least two of the six hours from 4 to 10 h.
+A logistic regression turns those, plus how often the city's weather station usually has fog, into a chance. There are four sets of weights: fog and mist, each for a whole morning and for a single hour. Fog means visibility under 1 km and mist under 5 km, in air close to saturation: the temperature reported by the airport is within 2 °C of the dew point. Smoke, haze and dry smog are left out that way. A report with rain, snow, drizzle or other precipitation is not counted as mist or fog. A morning counts when mist or fog is reported in at least two of the six hours from 4 to 10 h.
+
+The usual rates and the tests are from the station named on each city's page, where the visibility is reported, and the tests used the weather values for the station too. At seven cities with a second station nearer the centre, fog skill at that station was 19% with the weather values for its own grid square and 9% with the airport's.
 
 The weights were fitted once on 14 European airports together. A new place needs its usual fog and mist rates from its own visibility record, and one correction for each.
-
-The weather values are taken for the centre of each city. The usual rates, the corrections and the tests are from the station named on the page, where the visibility is reported, and the tests were run with the weather values for the station. At seven cities with a second station nearer the centre, fog skill at that station was 19% with the weather values for its own grid square and 9% with the airport's.
 
 At some places the average is off: at Houston the weights give 3% for fog where fog comes on 8% of mornings, and at Zurich 19% where it comes on 13%. Each city except Delhi, Lahore and Amritsar therefore has a correction for fog and one for mist, added to the morning chance and to each hour. It is half of what would make the average equal to how often fog came. Half, because the full correction did no better in the test and overstated the high chances more.
 
@@ -29,7 +29,7 @@ The humidity condition matters in few places. Of Delhi's 136 mornings with visib
 
 Fitted and tested on October to March mornings since January 2024: 6,115 mornings at 14 airports, 1,083 with mist and 460 with fog. Observations are airport METAR reports from the Iowa State archive. Berlin's page takes its usual rates from DWD station data for Tempelhof; in the fit, Berlin is the airport. The forecasts are day-ahead ICON-EU runs from Open-Meteo's previous-runs archive.
 
-Skill below is the Brier skill score against always saying the site's usual rate. 0% is no better than that, 100% is perfect.
+Skill below is the Brier skill score against always saying the station's usual rate. 0% is no better than that, 100% is perfect.
 
 | Left out of fitting | Mist | Fog |
 |---|---|---|
@@ -61,7 +61,7 @@ Limitations:
 - Ranking mornings, it ties with the fog code in ICON's own output. At the same 1,137 alarms the fog code caught 622 mist mornings and the formula 628. What the formula adds is a percentage.
 - Fog skill differs by city: Prague 35%, Vienna 34%, Milan 31%, down to London Heathrow 8%, Madrid 7% and Frankfurt −1%. See "Which cities are shown".
 - The page uses the day-ahead weights for mornings up to four days out. Mist skill falls from 29% at one day to 26, 22 and 18% at two, three and four days. Among mornings given 40% or more for mist, mist came on 60% at one day ahead and on 51% at four days. Fog skill falls from 24% to 21, 17 and 13%. Among mornings given 30% or more for fog, fog came on 45% at one day ahead and on 35% at four days.
-- Within a morning, the hourly formula ranks a misty hour above a clear one 70% of the time. The site's usual daily pattern alone manages 65%.
+- Within a morning, the hourly formula ranks a misty hour above a clear one 70% of the time. The station's usual daily pattern alone manages 65%.
 - An airport is one point, often outside the city. Heathrow has mist on 7% of mornings, Stansted and Luton on 27%.
 - The forecast archive holds two and a half winters, and the inputs and time windows were chosen while looking at the same data.
 
