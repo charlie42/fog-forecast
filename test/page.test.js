@@ -57,13 +57,13 @@ test('draws a row per morning from a saved Munich forecast', () => {
   const html = forecastHtml(hourly, munich, 'en', Date.parse(now));
   assert.equal(html.split('class="morning"').length - 1, read('munich-expected.json').length);
   assert.ok(html.startsWith('<div class="row"><span></span><small>Mist</small><small>Fog</small></div>'
-    + '<div class="morning"><div class="row"><span>Today, Sunday 4 Oct</span><span class="high">62%</span><span class="high">58%</span></div>'));
+    + '<div class="morning"><div class="row"><span>Today, Sunday 4 Oct</span><span class="high">55%</span><span class="high">51%</span></div>'));
   assert.ok(html.includes('<table class="hours"><tr><th></th><th>3h</th><th>4h</th>'));
-  assert.ok(html.includes('<tr><th>fog</th><td>46%</td><td>45%</td>'));
+  assert.ok(html.includes('<tr><th>fog</th><td>40%</td><td>37%</td>'));
 
   const german = forecastHtml(hourly, munich, 'de', Date.parse(now));
   assert.ok(german.startsWith('<div class="row"><span></span><small>Dunst</small><small>Nebel</small></div>'
-    + '<div class="morning"><div class="row"><span>Heute, Sonntag, 4. Okt.</span><span class="high">62%</span>'));
+    + '<div class="morning"><div class="row"><span>Heute, Sonntag, 4. Okt.</span><span class="high">55%</span>'));
   assert.ok(german.includes('<summary><small>nach Stunde</small></summary>'));
   assert.match(german, /<p><small>Stand: <time datetime="2026-10-04T[\d:.]+Z">\d+\. Okt\. 2026, \d\d:\d\d \S+<\/time><\/small><\/p>$/);
   assert.match(html, /<p><small>Updated <time datetime="2026-10-04T[\d:.]+Z">\d+ Oct 2026, \d\d:\d\d \S+<\/time><\/small><\/p>$/);

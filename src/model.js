@@ -15,11 +15,11 @@ export const HOURS = [3, 4, 5, 6, 7, 8, 9, 10, 11];
 export const VARIABLES = ['relative_humidity_2m', 'temperature_2m', 'dew_point_2m', 'wind_speed_10m', 'precipitation', 'cloud_cover'];
 
 // Weights in the order of `morningInputs` below, then the usual rate (as log-odds), then the constant.
-const MIST_MORNING = [0.20342, -0.13347, -0.62789, -0.00341, -0.20227, -0.01995, 0.74347, -17.60958];
-const FOG_MORNING = [0.21223, -0.18159, -0.83361, -0.00905, -0.43466, 0.1618, 0.33433, -19.60083];
+const MIST_MORNING = [0.20169, -0.12625, -0.67727, -0.0037, -0.25621, -0.03476, 0.75171, -17.33744];
+const FOG_MORNING = [0.20864, -0.16897, -0.9078, -0.00993, -0.51486, 0.15244, 0.34868, -19.07335];
 // Weights in the order of `hourInputs` below, then the morning inputs, the usual rate for that hour, the constant.
-const MIST_HOUR = [0.07478, -0.05783, -0.2973, -0.25481, -0.00156, 0.08788, -0.06716, -0.5596, -0.00385, -0.16795, -0.04451, 0.66459, -13.5673];
-const FOG_HOUR = [0.27946, -0.10117, 0.97268, -1.73308, -0.00587, 0.11295, -0.06034, -0.39226, -0.00701, -0.36114, 0.10603, 0.44476, -37.09207];
+const MIST_HOUR = [0.06398, -0.04304, -0.22212, -0.37503, -0.00105, 0.10844, -0.07628, -0.58067, -0.0043, -0.22331, -0.05695, 0.63314, -14.54606];
+const FOG_HOUR = [0.08938, -0.07122, -0.18994, -1.71141, -0.00463, 0.12664, -0.08299, -0.48341, -0.00778, -0.43345, 0.1027, 0.38806, -19.6028];
 const FOG = {
   europe: {morning: FOG_MORNING, hour: FOG_HOUR},
   'south-asia': {
