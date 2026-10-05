@@ -19,6 +19,9 @@ ICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0
 LANGUAGES = {'en': 'English', 'de': 'Deutsch', 'it': 'Italiano'}
 LOADING = {'en': 'loading…', 'de': 'lädt…', 'it': 'caricamento…'}
 AND = {'en': ' and ', 'de': ' und ', 'it': ' e '}
+# The cities named in a front page's description; the others are counted.
+LEAD = {'en': ['Berlin', 'Hamburg', 'Munich', 'Paris', 'Amsterdam'], 'de': ['Berlin', 'Hamburg', 'München', 'Wien', 'Zürich'],
+        'it': ['Milano', 'Venezia', 'Bologna']}
 # The usual rates in cities.json are for the foggier half of the year: north of the equator, then south of it.
 SEASON = {'en': ['October to March', 'April to September'], 'de': ['Oktober bis März', 'April bis September'],
           'it': ['ottobre a marzo', 'aprile a settembre']}
@@ -82,7 +85,7 @@ def city_page(city, cities, lang, forecast):
                      for other, to in addresses.items() if other != lang)
     rest = [f'<li><a href="{root}{address(c, "en")}" lang="en" hreflang="en">{c["name"]}</a></li>' for c in cities if not in_language(c, lang)]
     # A city that people search for by its region has the region next to its name: 'Lahore, Punjab'.
-    region = city.get('region', '')
+    region = here.get('region', '')
     # A place without a usual mist rate has a template of its own, which leaves mist out of the wording.
     return template('city' if 'mist' in city else 'city.fog', lang).substitute(
         name=here['name'], region=region and f', {region}', regionAside=region and f', {region},', inRegion=region and f' in {region}',
@@ -96,7 +99,7 @@ def city_page(city, cities, lang, forecast):
 def index_page(cities, lang):
     """`rest` lists the cities without a page in this language, linked to their English one."""
     places = [in_language(c, lang) for c in cities if in_language(c, lang)]
-    names = [c['name'] for c in places]
+    lead = [name for name in LEAD[lang] if any(c['name'] == name for c in places)]
     rows = '\n'.join(
         f'<li><a href="{slug(c)}/">{c["name"]}</a></li>' for c in places)
     rest = '\n'.join(
@@ -104,7 +107,7 @@ def index_page(cities, lang):
     switch = ' · '.join(f'<a href="{"../" if lang != "en" else ""}{folder(other)}" lang="{other}" hreflang="{other}">{name}</a>'
                         for other, name in LANGUAGES.items() if other != lang)
     return template('index', lang).substitute(
-        switch=switch, count=len(places), names=', '.join(names), names_and=', '.join(names[:-1]) + AND[lang] + names[-1], rows=rows, rest=rest,
+        switch=switch, count=len(places), lead=', '.join(lead), more=len(places) - len(lead), rows=rows, rest=rest,
         url=SITE_URL + folder(lang), alternates=alternates({other: folder(other) for other in LANGUAGES}), icon=ICON)
 
 
