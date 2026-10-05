@@ -2,3 +2,4 @@ _site/
 forecasts.json
 reports.json
 __pycache__/
+fit/cache
