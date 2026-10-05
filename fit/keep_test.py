@@ -122,8 +122,11 @@ def build_city_entry(station, city, tz, model, reports, table, hours):
     if model != 'icon_eu':
         entry['model'] = model
     entry.update(mist=round_rate(table.mist.mean()), fog=round_rate(table.fog.mean()))
-    entry['mistByHour'] = [round_rate(v) for v in hours['mist'].groupby(hours['mist'].h).flag.mean()]
-    entry['fogByHour'] = [round_rate(v) for v in hours['fog'].groupby(hours['fog'].h).flag.mean()]
+    for target in ('mist', 'fog'):
+        by_hour = hours[target].groupby(hours[target].h).flag.mean().reindex(common.HOURS)
+        if by_hour.isna().any():
+            raise ValueError(f'{station}: no {target} reports at hour {list(by_hour[by_hour.isna()].index)}')
+        entry[target + 'ByHour'] = [round_rate(v) for v in by_hour]
     return entry
 
 

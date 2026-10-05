@@ -53,6 +53,7 @@ def download(url, name):
     path = os.path.join(CACHE_DIR, name)
     if os.path.exists(path):
         return path
+    os.makedirs(CACHE_DIR, exist_ok=True)
     for attempt in range(4):
         try:
             with urllib.request.urlopen(url, timeout=120) as response:
