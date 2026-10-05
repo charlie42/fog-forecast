@@ -63,17 +63,17 @@ Where it is weak:
 
 ## Correction per city
 
-Tested on the 23 cities as shown on the site (10,232 mornings, 966 with fog), each winter with weights, usual rate and correction from the other winters. Fog skill went from 24.2% to 25.4% (90% range of the gain +0.4 to +1.9) and mist skill from 31.7% to 32.9% (+0.5 to +1.9). Most of the fog gain is at Houston, Galveston and Zurich. Mornings given 50% or more for fog had fog 54% of the time, against 54% before. Berlin's correction rests on 24 fog mornings, most of them in two winters that were foggier than the two before.
+Tested on the 22 cities as shown on the site (9,794 mornings, 945 with fog), each winter with weights, usual rate and correction from the other winters. Fog skill went from 24.6% to 25.8% (90% range of the gain +0.4 to +1.9) and mist skill from 32.1% to 33.3% (+0.4 to +1.8). Most of the fog gain is at Houston, Galveston and Zurich. Mornings given 50% or more for fog had fog 55% of the time, against 54% before. Berlin's correction rests on 24 fog mornings, most of them in two winters that were foggier than the two before.
 
 With the correction, and the number of mornings behind each step:
 
 | Chance given for fog | Mornings | Fog came on |
 |---|---|---|
-| about 1% | 6,819 | 1% |
-| about 9% | 1,425 | 10% |
-| about 22% | 837 | 24% |
-| about 39% | 721 | 41% |
-| about 58% | 358 | 52% |
+| about 1% | 6,453 | 1% |
+| about 9% | 1,383 | 10% |
+| about 22% | 821 | 24% |
+| about 39% | 712 | 41% |
+| about 58% | 353 | 52% |
 | about 76% | 72 | 65% |
 
 ## Which cities are shown
@@ -97,7 +97,6 @@ Cities added later use the same weights, unchanged, with their own usual rates a
 | Houston | 23% | 14% |
 | Bologna | 29% | 13% |
 | Auckland | 28% | 12% |
-| Atlanta | 15% | 8% |
 
 Across the 14 US airports first tested (6,131 mornings, 349 with fog) skill was 24% for mist and 18% for fog.
 
@@ -111,7 +110,7 @@ Things to know about some of these:
 
 Tested and left out:
 
-- Fog skill not clearly above zero, or under 10%: Los Angeles, New York, Denver, Portland, Chicago, Washington, San Diego, Vancouver, Turin and London Luton.
+- Fog skill not clearly above zero, or under 10%: Atlanta (8%, range from −1%), Los Angeles, New York, Denver, Portland, Chicago, Washington, San Diego, Vancouver, Turin and London Luton.
 - Nearer the centre than the airport shown, and not good enough: Houston Hobby (fog skill 9.7%) and the weather station inside Munich (8%, range from −19%). Fog in the city of Munich is a third as common as at its airport, 24 mornings against 72, and the formula gave 9% on average where fog came on 5.5% of mornings. Fog skill at Paris Orly is the same as at Charles de Gaulle and Orly is only 6 km nearer, so Paris was left as it is.
 - Fewer than 15 fog mornings: San Francisco, Boston, Minneapolis, Toronto, Melbourne and Dubai.
 - Islamabad: the formula never says more than about 9% there, and 15 of its 22 fog mornings fell in one month.
@@ -130,4 +129,4 @@ Lahore reads a little high: mornings given about 80% had fog 74% of the time, an
 
 The formula knows fog that forms on calm, clear nights. It does not know fog that drifts in from the sea, which is most of what Los Angeles and the San Francisco coast get.
 
-Fog has a season, and outside it the numbers mean less. At the 21 northern cities fog came on 1% of April to August mornings (82 of 9,491), against 10% from October to March, and the page says so in those months. Auckland is the other way round, with 3 fog mornings in 438 from October to March. Christchurch has fog all year (15% of mornings from April to September, 8% from October to March) and the forecast works in both halves, so its page carries no such note. In the US the formula had no skill from April to September. In Europe it had almost none from April to July; August and September were about as good as winter, August on few fog mornings.
+Fog has a season, and outside it the numbers mean less. At the 20 northern cities fog came on 1% of April to August mornings (74 of 9,038), against 10% from October to March, and the page says so in those months. Auckland is the other way round, with 3 fog mornings in 438 from October to March. Christchurch has fog all year (15% of mornings from April to September, 8% from October to March) and the forecast works in both halves, so its page carries no such note. In the US the formula had no skill from April to September. In Europe it had almost none from April to July; August and September were about as good as winter, August on few fog mornings.
