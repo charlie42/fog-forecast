@@ -15,7 +15,7 @@
 <main>
 <article>
 <h1>How accurate the fog forecast is</h1>
-<p>The <a href="../">forecast</a> was checked on 9,794 mornings since January 2024 in 22 cities in Europe, the United States and New Zealand.</p>
+<p>A fog chance of 20% is accurate if fog happens on about 20 of 100 mornings with that chance. This was checked for the <a href="../">forecast</a> on 9,794 mornings since January 2024, in 22 cities in Europe, the United States and New Zealand.</p>
 
 <table>
 <tr><th>Mornings</th><th>Fog chance the forecast gave</th><th>Fog happened</th></tr>
@@ -27,28 +27,34 @@
 <tr><td>72</td><td>about 76%</td><td>65%</td></tr>
 </table>
 
-<p>Most mornings were given a chance near zero, and fog almost never came on them. With low and middle chances, fog came about as often as given. The highest chances, given on few mornings, ran somewhat high.</p>
+<p>Up to a chance of about 40%, fog happened as often as the forecast said, within two percentage points. Most mornings are in the first row: a chance near zero, and almost no fog.</p>
+
+<p>Above 50% the forecast was too high: of the mornings with a chance of about 76%, 65% had fog. Such mornings are rare, 425 of the 9,794. With so few of them there is less to fit the forecast on and less to check it against, so the last two rows are the least certain.</p>
 
 <h2>How it was tested</h2>
-<p>For each morning, the forecast made the day before was compared with what was measured. No winter was tested with a formula that had seen it: each winter was left out when its formula was fitted.</p>
+<p>For each morning, the forecast made the day before was compared with what was measured. The forecast is a formula fitted on past winters. To keep the test fair, each winter was tested with a formula fitted on the other winters only, so every morning of the test was new to its formula.</p>
 
-<p>Visibility is measured at weather stations, mostly airports, so the test was done there, with the weather data for the station. The station is written on each city's page. On the city pages the same formula is given the weather data for the city centre.</p>
+<p>Visibility is measured at weather stations, mostly airports, so that is where the test was done. The station is written on each city's page. The forecast on a city page is made with the same formula, for the city centre.</p>
 
-<p>A morning was counted as foggy when visibility under 1 km, without rain, snow or drizzle, was measured in at least two of the six hours from 4 to 10 h. The mornings are from October to March, and from April to September in New Zealand.</p>
+<p>A morning was counted as foggy when, in at least two of the six hours from 4 to 10 h, visibility was under 1 km with no rain, snow or drizzle. The mornings are from October to March, and from April to September in New Zealand.</p>
 
 <h2>Which fog it covers</h2>
-<p>The forecast is built for fog that forms overnight in calm air. Fog that comes in from the sea follows other rules, so coastal cities such as Los Angeles and San Francisco have no page.</p>
+<p>The forecast is made for fog that forms overnight in calm air. Fog that comes in from the sea is a different kind, so coastal cities such as Los Angeles and San Francisco have no page.</p>
 
 <h2>Delhi, Lahore and Amritsar</h2>
-<p>These three share a formula of their own and were tested separately. It has one more input, whether the morning before had fog. Fog on that plain comes in runs of days: after a fog morning, the next one had fog about three times in four.</p>
+<p>These three cities have a formula of their own and were tested separately. Fog on that plain comes in runs of days: after a foggy morning, the next morning had fog about three times in four. So their formula has one more input, whether the morning before had fog.</p>
 
-<p>In Lahore the chances are close: mornings given about 60% had fog 58% of the time. In Delhi they run high in the middle of the range and are right at the top: mornings given about 60% had fog 43% of the time, and those given about 85% had it 88% of the time. In Amritsar they run low: mornings given about 60% had fog 80% of the time.</p>
+<p>Mornings with a chance of about 60% had fog 58% of the time in Lahore, 43% in Delhi and 80% in Amritsar. So the chance is accurate in Lahore, too high in Delhi and too low in Amritsar. At the top of the range Delhi is accurate: mornings with a chance of about 85% had fog 88% of the time.</p>
 
 <h2>Compared with airport forecasts</h2>
-<p>Professional fog forecasts exist for airports: several times a day a forecaster writes down the visibility expected there over the next day (a TAF). The forecast of this site was compared with them at the six US airports on the site, on 2,584 mornings, 243 of them with fog, at the same number of fog warnings. A day ahead the two were close, with the formula a little ahead: 90 fog mornings caught against 81, with the airport forecast issued about 21 hours before. Airport forecasts are written for flight planning and renewed every six hours, and their far end is cautious about fog. Against the one issued about 15 hours before, with six more hours of information, the two were level: 112 against 116. European airport forecasts are saved daily since October 2026, for the same comparison there.</p>
+<p>Airports have professional fog forecasts. Several times a day a forecaster writes down the visibility expected at the airport over the next day (a TAF). The forecast of this site was compared with them at the six US airports on the site, on 2,584 mornings, 243 of them with fog. Both were given the same number of fog warnings.</p>
+
+<p>A day ahead the forecast of this site was a little ahead: it caught 90 of the fog mornings, and the airport forecast issued about 21 hours before caught 81. Airport forecasts are written for flight planning and renewed every six hours, and they are cautious about fog at their far end. The next airport forecast, issued about 15 hours before with six more hours of information, was level: it caught 116, against 112.</p>
+
+<p>For the same comparison in Europe, airport forecasts are saved daily since October 2026.</p>
 
 <h2>How the percentage is made</h2>
-<p>The method is the one weather services use for local forecasts, called model output statistics: a logistic regression fitted on two and a half winters of ICON forecasts against the visibility that airports reported. The method and all test results are <a href="https://github.com/charlie42/fog-forecast/blob/main/HOW-IT-WORKS.md">on GitHub</a>.</p>
+<p>The method is one that weather services use for local forecasts, called model output statistics. Two and a half winters of forecasts from the ICON weather model were put next to the visibility measured at airports, and a formula (a logistic regression) was fitted to them. The method and all test results are <a href="https://github.com/charlie42/fog-forecast/blob/main/HOW-IT-WORKS.md">on GitHub</a>.</p>
 </article>
 </main>
 </body>
