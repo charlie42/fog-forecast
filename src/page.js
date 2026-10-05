@@ -58,10 +58,10 @@ function morningHtml(morning, today, lang) {
 }
 
 // A note for the months when fog is rare at the place: `rare` holds the first and last of them, e.g. [10, 3] for Auckland.
+// `month` is the month at the place, 1 to 12.
 // Without it they are April to August. An empty `rare` means fog all year (Christchurch) and no note.
-function rareNote(place, lang, now) {
+function rareNote(place, lang, month) {
   const [first, last] = place.rare ?? [4, 8];
-  const month = new Date(now).getMonth() + 1;
   const rareNow = first <= last ? first <= month && month <= last : month >= first || month <= last;
   if (!first || !rareNow) return '';
   const name = number => new Date(2000, number - 1).toLocaleDateString(TEXT[lang].locale, {month: 'long'});
@@ -84,7 +84,7 @@ export function forecastHtml(hourly, place, lang = 'en', now = Date.now()) {
   const today = new Date(now).toLocaleDateString('en-CA', {timeZone: place.tz});
   const mornings = forecastMornings(hourly, place, now);
   const rows = mornings.map(m => morningHtml(m, today, lang)).join('');
-  return (rows ? headingHtml(mornings[0], lang) + rows + updatedHtml(lang, now) : TEXT[lang].none) + rareNote(place, lang, now);
+  return (rows ? headingHtml(mornings[0], lang) + rows + updatedHtml(lang, now) : TEXT[lang].none) + rareNote(place, lang, Number(today.slice(5, 7)));
 }
 
 // The page arrives with the rows from when the site was last built (prerender.js). This swaps in fresh ones.
@@ -92,7 +92,9 @@ export async function showForecast(place, lang = 'en', out = document.getElement
   try {
     const response = await fetch(forecastUrl(place));
     if (!response.ok) throw new Error(response.status);
-    out.innerHTML = forecastHtml((await response.json()).hourly, place, lang);
+    const rows = forecastHtml((await response.json()).hourly, place, lang);
+    // An answer without a single morning (gaps while a new model run comes in) does not replace the rows from the build.
+    if (rows.includes('class="morning"') || !out.querySelector('.morning')) out.innerHTML = rows;
   } catch {
     // The rows from the build stay. Search engines always end up here, because Open-Meteo's robots.txt keeps them out.
     if (!out.querySelector('.morning')) out.textContent = TEXT[lang].failed;

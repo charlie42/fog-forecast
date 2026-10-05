@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {dayLabel, forecastHtml} from '../src/page.js';
+import {dayLabel, forecastHtml, showForecast} from '../src/page.js';
 
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url)));
 
@@ -25,6 +25,30 @@ test('says when fog is rare, by the place\'s own season', () => {
   assert.match(note({...munich, rare: [10, 3]}, '2026-01-10'), /rare from October to March.*starts in April/);
   assert.equal(note({...munich, rare: [10, 3]}, '2026-05-10'), '');
   assert.equal(note({...munich, rare: []}, '2026-05-10'), '');
+});
+
+test('takes the month for the rare-fog note from the date at the place', () => {
+  const {hourly} = read('munich-forecast.json');
+  const munich = read('../cities.json').find(city => city.name === 'Munich');
+  const html = (tz, date) => forecastHtml(hourly, {...munich, tz, rare: [10, 3]}, 'en', Date.parse(date));
+  assert.match(html('Pacific/Auckland', '2026-09-30T12:30:00Z'), /rare from October to March/);   // 1 October there
+  assert.doesNotMatch(html('America/Los_Angeles', '2026-10-01T05:00:00Z'), /rare from/);          // still 30 September there
+});
+
+test('keeps the rows from the build when the fresh forecast holds no morning', async t => {
+  const {hourly} = read('munich-forecast.json');
+  const munich = read('../cities.json').find(city => city.name === 'Munich');
+  const gaps = {...hourly, relative_humidity_2m: hourly.relative_humidity_2m.map(() => null)};
+  t.mock.method(globalThis, 'fetch', async () => ({ok: true, json: async () => ({hourly: gaps})}));
+  const element = html => ({innerHTML: html, querySelector: () => html.includes('class="morning"') ? {} : null});
+
+  const built = element('<div class="morning">from the build</div>');
+  await showForecast(munich, 'en', built);
+  assert.equal(built.innerHTML, '<div class="morning">from the build</div>');
+
+  const empty = element('');
+  await showForecast(munich, 'en', empty);
+  assert.match(empty.innerHTML, /^No forecast right now/);
 });
 
 test('draws a row per morning from a saved Munich forecast', () => {
