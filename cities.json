@@ -99,11 +99,11 @@
    "fog": 0.296,
    "fogByMonth": [0.727, 0.248, 0.013, 0.003, 0.003, 0.007, 0.003, 0.003, 0.003, 0.026, 0.257, 0.5],
    "fogByHour": [0.167, 0.186, 0.205, 0.223, 0.304, 0.311, 0.206, 0.126, 0.092]},
-  {"name": "Lahore", "site": "Allama Iqbal airport", "lat": 31.5216, "lon": 74.4036, "tz": "Asia/Karachi", "model": "icon_global", "formula": "south-asia", "station": "OPLA", "rare": [3, 10],
+  {"name": "Lahore", "region": "Punjab", "site": "Allama Iqbal airport", "lat": 31.5216, "lon": 74.4036, "tz": "Asia/Karachi", "model": "icon_global", "formula": "south-asia", "station": "OPLA", "rare": [3, 10],
    "fog": 0.227,
    "fogByMonth": [0.581, 0.121, 0.013, 0.003, 0.003, 0.003, 0.003, 0.003, 0.003, 0.003, 0.181, 0.458],
    "fogByHour": [0.128, 0.138, 0.157, 0.216, 0.254, 0.185, 0.144, 0.103, 0.07]},
-  {"name": "Amritsar", "site": "Sri Guru Ram Dass Jee airport", "lat": 31.7096, "lon": 74.7973, "tz": "Asia/Kolkata", "model": "icon_global", "formula": "south-asia", "station": "VIAR", "rare": [4, 9],
+  {"name": "Amritsar", "region": "Punjab", "site": "Sri Guru Ram Dass Jee airport", "lat": 31.7096, "lon": 74.7973, "tz": "Asia/Kolkata", "model": "icon_global", "formula": "south-asia", "station": "VIAR", "rare": [4, 9],
    "fog": 0.444,
    "fogByMonth": [0.715, 0.396, 0.073, 0.014, 0.003, 0.003, 0.003, 0.003, 0.007, 0.13, 0.583, 0.769],
    "fogByHour": [0.294, 0.318, 0.349, 0.377, 0.432, 0.427, 0.343, 0.209, 0.156]}

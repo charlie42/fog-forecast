@@ -81,9 +81,12 @@ def city_page(city, cities, lang, forecast):
     switch = ''.join(f'<br>\n<a href="{root}{to}" lang="{other}" hreflang="{other}">{LANGUAGES[other]}</a>'
                      for other, to in addresses.items() if other != lang)
     rest = [f'<li><a href="{root}{address(c, "en")}" lang="en" hreflang="en">{c["name"]}</a></li>' for c in cities if not in_language(c, lang)]
+    # A city that people search for by its region has the region next to its name: 'Lahore, Punjab'.
+    region = city.get('region', '')
     # A place without a usual mist rate has a template of its own, which leaves mist out of the wording.
     return template('city' if 'mist' in city else 'city.fog', lang).substitute(
-        name=here['name'], site=here['site'], nav='\n'.join(nav), rest='\n'.join(rest), switch=switch, forecast=forecast,
+        name=here['name'], region=region and f', {region}', regionAside=region and f', {region},', inRegion=region and f' in {region}',
+        site=here['site'], nav='\n'.join(nav), rest='\n'.join(rest), switch=switch, forecast=forecast,
         fog=percent(city['fog']), mist=percent(city.get('mist', 0)), season=SEASON[lang][city['lat'] < 0],
         months=by_month(city) if 'fogByMonth' in city else '',
         place=json.dumps({key: city[key] for key in PLACE_KEYS if key in city}),

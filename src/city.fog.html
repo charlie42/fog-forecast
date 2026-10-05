@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fog forecast $name: chance of fog tomorrow morning, hour by hour</title>
-<meta name="description" content="Chance of fog in $name tomorrow morning and the mornings after, hour by hour from 3 to 11 h, measured against $site.">
+<title>Fog forecast $name$region: chance of fog tomorrow morning, hour by hour</title>
+<meta name="description" content="Chance of fog in $name$regionAside tomorrow morning and the mornings after, hour by hour from 3 to 11 h, measured against $site.">
 <meta property="og:title" content="Fog forecast $name">
 <meta property="og:description" content="Chance of fog in $name tomorrow morning and the mornings after, hour by hour.">
 <link rel="canonical" href="$url">
@@ -15,7 +15,7 @@ $alternates<link rel="icon" href="$icon">
 <main>
 <h1>Fog forecast for $name</h1>
 <div id="forecast">$forecast</div>
-<p><small>Fog = visibility under 1 km in humid air, for at least two hours between 04 and 10 h. Dry smog does not count. At $site, fog usually turns up on $months. Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a>.$switch</small></p>
+<p><small>Fog = visibility under 1 km in humid air, for at least two hours between 04 and 10 h. Dry smog does not count. At $site$inRegion, fog usually turns up on $months. Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a>.$switch</small></p>
 </main>
 <nav>
 <ul class="cities">
