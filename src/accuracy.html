@@ -33,6 +33,9 @@
 
 <p>Delhi, Lahore and Amritsar share a formula of their own and were tested separately. In Delhi the forecast gives too high a chance: mornings given about 60% had fog 52% of the time. In Lahore it is a little too high: mornings given about 80% had fog 74% of the time. In Amritsar it gives too low a chance: mornings given about 60% had fog 74% of the time.</p>
 
+<h2>How the percentage is made</h2>
+<p>The method is what weather services call model output statistics: a logistic regression, fitted on two and a half winters of ICON forecasts against the visibility that airports reported. Delhi, Lahore and Amritsar have one more input, whether the morning before had fog. Fog on that plain comes in runs of days: after a fog morning, the next one had fog about three times in four.</p>
+
 <p>The method and all test results are <a href="https://github.com/charlie42/fog-forecast/blob/main/HOW-IT-WORKS.md">on GitHub</a>.</p>
 </article>
 </main>
