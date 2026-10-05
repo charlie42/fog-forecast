@@ -14,7 +14,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cache')
+CACHE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cache')
 HOUR = pd.Timedelta(hours=1)
 WINTER = (10, 11, 12, 1, 2, 3)
 RAIN_CODES = 'RA|SN|DZ|SG|PL|GR|GS|UP'
@@ -30,14 +30,14 @@ HOURS = range(3, 12)
 
 # The archive lists these three airports at the town, 7 to 16 km from the runway, which is another
 # cell of the worldwide ICON model. Positions from OurAirports.
-POSITION = {'VIAR': (31.7096, 74.7973), 'OPST': (32.5359, 74.3646), 'OPPS': (33.9939, 71.5146)}
+STATION_POSITIONS = {'VIAR': (31.7096, 74.7973), 'OPST': (32.5359, 74.3646), 'OPPS': (33.9939, 71.5146)}
 # And these two in another place altogether: Lublin 477 km from its airport, Braunschweig 8 km. Positions from aviationweather.gov.
-POSITION.update({'EPLB': (51.2403, 22.7136), 'EDVE': (52.319, 10.558)})
+STATION_POSITIONS.update({'EPLB': (51.2403, 22.7136), 'EDVE': (52.319, 10.558)})
 
 FORECAST_VARIABLES = ['relative_humidity_2m', 'temperature_2m', 'dew_point_2m',
                       'wind_speed_10m', 'precipitation', 'cloud_cover']
 
-EUROPE = [
+EUROPE_STATIONS = [
     ('EDDB', 'Berlin', 'Europe/Berlin'), ('EDDH', 'Hamburg', 'Europe/Berlin'),
     ('EDDM', 'Munich', 'Europe/Berlin'), ('EDDF', 'Frankfurt', 'Europe/Berlin'),
     ('EGLL', 'London', 'Europe/London'), ('LFPG', 'Paris', 'Europe/Paris'),
@@ -50,7 +50,7 @@ EUROPE = [
 
 def download(url, name):
     """Path of the cached file `name`; the file is fetched from `url` first if it is missing."""
-    path = os.path.join(CACHE, name)
+    path = os.path.join(CACHE_DIR, name)
     if os.path.exists(path):
         return path
     for attempt in range(4):
@@ -67,7 +67,7 @@ def download(url, name):
     raise RuntimeError('could not download ' + url)
 
 
-def airport_reports(station, tz, first, last, near_saturation=False):
+def load_airport_reports(station, tz, first, last, near_saturation=False):
     """Airport reports from the Iowa State Mesonet, from `first` up to but not including `last`.
 
     Adds the columns `mist` (visibility under 5 km) and `fog` (under 1 km), both
@@ -87,8 +87,8 @@ def airport_reports(station, tz, first, last, near_saturation=False):
     reports = pd.read_csv(path, na_values='M')
     reports['t'] = pd.to_datetime(reports['valid'])
     reports = reports.dropna(subset=['vsby']).copy()
-    if station in POSITION:
-        reports['lat'], reports['lon'] = POSITION[station]
+    if station in STATION_POSITIONS:
+        reports['lat'], reports['lon'] = STATION_POSITIONS[station]
     dry = ~reports.wxcodes.fillna('').str.contains(RAIN_CODES)
     reports['mist'] = (reports.vsby < MIST_MILES) & dry
     reports['fog'] = (reports.vsby < FOG_MILES) & dry
@@ -99,16 +99,17 @@ def airport_reports(station, tz, first, last, near_saturation=False):
     return reports
 
 
-DWD = 'https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/hourly/'
+DWD_URL = 'https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/hourly/'
 
 
-def dwd_hourly(kind, code, station):
+def load_dwd_hourly(kind, code, station):
     """Hourly values of one kind ('visibility', 'VV' or 'precipitation', 'RR') from a station of the
     German weather service: the historical and the recent file joined, and the station's position."""
-    with urllib.request.urlopen(f'{DWD}{kind}/historical/', timeout=60) as response:
+    with urllib.request.urlopen(f'{DWD_URL}{kind}/historical/', timeout=60) as response:
         historical = re.search(f'stundenwerte_{code}_{station}_\\d+_\\d+_hist.zip', response.read().decode()).group(0)
     parts = []
-    for url in (f'{DWD}{kind}/historical/{historical}', f'{DWD}{kind}/recent/stundenwerte_{code}_{station}_akt.zip'):
+    urls = (f'{DWD_URL}{kind}/historical/{historical}', f'{DWD_URL}{kind}/recent/stundenwerte_{code}_{station}_akt.zip')
+    for url in urls:
         with open(download(url, 'dwd_' + url.split('/')[-1]), 'rb') as file:
             archive = zipfile.ZipFile(io.BytesIO(file.read()))
         values = [n for n in archive.namelist() if n.startswith('produkt')][0]
@@ -122,12 +123,12 @@ def dwd_hourly(kind, code, station):
     return table, float(place['Geogr.Breite']), float(place['Geogr.Laenge'])
 
 
-def dwd_reports(station, tz, first, last):
-    """Readings from a station of the German weather service, in the shape of `airport_reports`.
+def load_dwd_reports(station, tz, first, last):
+    """Readings from a station of the German weather service, in the shape of `load_airport_reports`.
 
     One visibility reading per hour, in metres. An hour counts as wet if rain was measured or flagged."""
-    visibility, lat, lon = dwd_hourly('visibility', 'VV', station)
-    rain, _, _ = dwd_hourly('precipitation', 'RR', station)
+    visibility, lat, lon = load_dwd_hourly('visibility', 'VV', station)
+    rain, _, _ = load_dwd_hourly('precipitation', 'RR', station)
     reports = pd.DataFrame({'metres': visibility.V_VV.where(visibility.V_VV >= 0)})
     reports = reports.join(pd.DataFrame({'wet': (rain.R1 > 0) | (rain.RS_IND == 1)}), how='left').dropna(subset=['metres'])
     dry = ~reports.wet.fillna(False).astype(bool)
@@ -138,7 +139,7 @@ def dwd_reports(station, tz, first, last):
     return reports[(reports.t >= first) & (reports.t < last)].reset_index(drop=True)
 
 
-def forecast(name, lat, lon, tz, model, last):
+def load_forecast(name, lat, lon, tz, model, last):
     """Day-ahead forecast (the run made the day before) from the Open-Meteo archive of past runs.
 
     One row per hour, indexed by the clock at the place, from 2024-01-20 to `last`.
@@ -160,7 +161,7 @@ def forecast(name, lat, lon, tz, model, last):
     return table[~table.index.duplicated()]
 
 
-def morning_labels(reports, flags):
+def label_mornings(reports, flags):
     """For each day with reports in at least 5 of the clock hours 04 to 09: is each flag set in 2 or more of them?"""
     window = reports[(reports.t.dt.hour >= 4) & (reports.t.dt.hour < 10)].copy()
     window['day'] = window.t.dt.normalize()
@@ -171,11 +172,11 @@ def morning_labels(reports, flags):
     return hours_flagged[hours_reported >= 5] >= 2
 
 
-def morning_inputs(f, day):
-    """The six inputs for one morning from the day-ahead forecast `f`, or None if the forecast has gaps."""
-    morning = f.loc[day + 4 * HOUR:day + 9 * HOUR]          # 04 to 09 h
-    night = f.loc[day - 3 * HOUR:day + 6 * HOUR]            # 21 h the day before to 06 h
-    evening = f.loc[day - 6 * HOUR:day - 4 * HOUR]          # 18 to 20 h the day before
+def compute_morning_inputs(forecast, day):
+    """The six inputs for one morning from the day-ahead `forecast`, or None if the forecast has gaps."""
+    morning = forecast.loc[day + 4 * HOUR:day + 9 * HOUR]          # 04 to 09 h
+    night = forecast.loc[day - 3 * HOUR:day + 6 * HOUR]            # 21 h the day before to 06 h
+    evening = forecast.loc[day - 6 * HOUR:day - 4 * HOUR]          # 18 to 20 h the day before
     if len(morning) < 6 or len(evening) < 3:
         return None
     if morning.relative_humidity_2m.isna().any() or evening.temperature_2m.isna().any():
@@ -189,11 +190,11 @@ def morning_inputs(f, day):
         cool=evening.temperature_2m.mean() - morning.temperature_2m.min())
 
 
-def morning_table(city, labels, f, months):
+def build_morning_table(city, labels, forecast, months):
     """One row per labelled morning in `months`: the labels and the six inputs."""
     rows = []
     for day in labels.index[labels.index.month.isin(months)]:
-        inputs = morning_inputs(f, day)
+        inputs = compute_morning_inputs(forecast, day)
         if inputs is not None:
             rows.append(dict(city=city, day=day, **labels.loc[day].to_dict(), **inputs))
     return pd.DataFrame(rows)
@@ -206,25 +207,25 @@ def finish_table(rows):
     return table
 
 
-def hour_table(mornings, reports, forecasts, flag):
+def build_hour_table(mornings, reports, forecasts, flag):
     """One row per morning and hour 03 to 11 h: was `flag` set in that clock hour, and the hourly inputs.
 
     The six morning inputs are copied onto each row. `reports` and `forecasts` are dicts by city."""
     rows = []
     for city, reported in reports.items():
         seen = reported.groupby(reported.t.dt.floor('h'))[flag].any()
-        f = forecasts[city]
+        forecast = forecasts[city]
         for _, morning in mornings[mornings.city == city].iterrows():
             for hour in HOURS:
-                t = morning.day + hour * HOUR
-                if t not in seen.index or t not in f.index:
+                hour_start = morning.day + hour * HOUR
+                if hour_start not in seen.index or hour_start not in forecast.index:
                     continue
-                now = f.loc[t]
+                now = forecast.loc[hour_start]
                 rows.append(dict(
-                    city=city, day=morning.day, h=hour, flag=bool(seen[t]),
+                    city=city, day=morning.day, h=hour, flag=bool(seen[hour_start]),
                     rh_h=now.relative_humidity_2m, wind_h=now.wind_speed_10m,
                     gap_h=now.temperature_2m - now.dew_point_2m,
-                    prec3=np.log1p(f.precipitation.loc[t - 2 * HOUR:t].sum()),
+                    prec3=np.log1p(forecast.precipitation.loc[hour_start - 2 * HOUR:hour_start].sum()),
                     cloud_h=now.cloud_cover, **{k: morning[k] for k in MORNING_INPUTS}))
     table = pd.DataFrame(rows).dropna().reset_index(drop=True)
     table['fold'] = table.day.dt.year * 100 + table.day.dt.month
@@ -235,12 +236,12 @@ def hour_table(mornings, reports, forecasts, flag):
 def load_europe():
     """Reports, forecasts and the morning table (columns `mist`, `fog`) for the 14 European airports."""
     reports, forecasts, rows = {}, {}, []
-    for station, city, tz in EUROPE:
-        reports[city] = airport_reports(station, tz, '2024-01-20', '2026-10-03')
-        forecasts[city] = forecast(f'fc_{station}.json', reports[city].lat.iloc[0], reports[city].lon.iloc[0],
-                                   tz, 'icon_eu', '2026-10-02')
-        labels = morning_labels(reports[city], ['mist', 'fog'])
-        rows.append(morning_table(city, labels, forecasts[city], WINTER))
+    for station, city, tz in EUROPE_STATIONS:
+        reports[city] = load_airport_reports(station, tz, '2024-01-20', '2026-10-03')
+        forecasts[city] = load_forecast(f'fc_{station}.json', reports[city].lat.iloc[0], reports[city].lon.iloc[0],
+                                        tz, 'icon_eu', '2026-10-02')
+        labels = label_mornings(reports[city], ['mist', 'fog'])
+        rows.append(build_morning_table(city, labels, forecasts[city], WINTER))
     return finish_table(rows), reports, forecasts
 
 
@@ -250,12 +251,12 @@ def logit(rate, low):
     return np.log(rate / (1 - rate))
 
 
-def logistic(max_iter=2000):
+def make_logistic(max_iter=2000):
     """Standardised inputs into a logistic regression."""
     return make_pipeline(StandardScaler(), LogisticRegression(max_iter=max_iter))
 
 
-def raw_weights(model):
+def to_raw_weights(model):
     """Weights in the units of the inputs, as used in model.js: one per input, then the constant."""
     scaler, regression = model[0], model[1]
     weights = regression.coef_[0] / scaler.scale_
@@ -263,24 +264,24 @@ def raw_weights(model):
     return [round(float(w), 5) for w in weights] + [round(float(constant), 5)]
 
 
-def skill(p, usual, y):
+def brier_skill_score(p, usual, y):
     """Brier skill score against always saying the usual rate."""
     return 1 - np.mean((p - y) ** 2) / np.mean((usual - y) ** 2)
 
 
-def skill_range(p, usual, y, fold, resamples=2000):
+def bootstrap_skill_range(p, usual, y, fold, resamples=2000):
     """90% range of the skill when the months are resampled."""
     months = sorted(set(fold))
     rows = {m: np.where(fold == m)[0] for m in months}
     rng = np.random.default_rng(0)
     scores = []
     for _ in range(resamples):
-        k = np.concatenate([rows[m] for m in rng.choice(months, len(months))])
-        scores.append(skill(p[k], usual[k], y[k]))
+        idx = np.concatenate([rows[m] for m in rng.choice(months, len(months))])
+        scores.append(brier_skill_score(p[idx], usual[idx], y[idx]))
     return np.nanpercentile(scores, 5), np.nanpercentile(scores, 95)
 
 
-def calibration(p, y, edges=(0, .05, .15, .3, .5, .7, 1.01)):
+def format_calibration(p, y, edges=(0, .05, .15, .3, .5, .7, 1.01)):
     """Chance given against what happened, for bands of the given chance."""
     parts = []
     for low, high in zip(edges[:-1], edges[1:]):

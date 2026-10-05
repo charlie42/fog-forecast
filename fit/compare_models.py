@@ -25,7 +25,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 import common
-from common import MORNING_INPUTS, logit, skill
+from common import MORNING_INPUTS, logit, brier_skill_score
 
 warnings.filterwarnings('ignore')
 RATE_FLOOR = 0.005   # usual rates are clipped to 0.5%..99.5% before the log-odds
@@ -72,7 +72,7 @@ LOGISTIC_GRID = [dict(C=c) for c in (0.003, 0.01, 0.03, 0.1, 0.3, 1, 10, 100)]
 
 # name: (parameter grid, function that builds the model from one set of parameters)
 MODELS = {
-    BASELINE: ([{}], lambda params: common.logistic()),
+    BASELINE: ([{}], lambda params: common.make_logistic()),
     'logistic C search': (LOGISTIC_GRID, lambda params: make_pipeline(
         StandardScaler(), LogisticRegression(max_iter=2000, **params))),
     'hist boosting': (BOOSTING_GRID, lambda params: HistGradientBoostingClassifier(
@@ -177,7 +177,8 @@ def bootstrap_skill_difference(p, q, usual_rate, y, month, n_resamples=2000):
     differences = []
     for _ in range(n_resamples):
         idx = np.concatenate([rows_of[m] for m in bootstrap_rng.choice(months, len(months))])
-        differences.append(skill(p[idx], usual_rate[idx], y[idx]) - skill(q[idx], usual_rate[idx], y[idx]))
+        differences.append(brier_skill_score(p[idx], usual_rate[idx], y[idx])
+                           - brier_skill_score(q[idx], usual_rate[idx], y[idx]))
     return np.percentile(differences, 5), np.percentile(differences, 95)
 
 
@@ -187,13 +188,14 @@ def main():
         for target in ('fog', 'mist'):
             predictions, usual_rate = predict_held_out(table, target, exclude_city)
             y = table[target].values.astype(float)
-            baseline_skill = skill(predictions[BASELINE], usual_rate, y)
+            baseline_skill = brier_skill_score(predictions[BASELINE], usual_rate, y)
             print(f'\n=== {target.upper()}, held out: {"winter+city" if exclude_city else "winter"} ===', flush=True)
             for name, p in predictions.items():
-                line = f'{name:24s} skill {skill(p, usual_rate, y):5.1%}'
+                skill = brier_skill_score(p, usual_rate, y)
+                line = f'{name:24s} skill {skill:5.1%}'
                 if name != BASELINE:
                     low, high = bootstrap_skill_difference(p, predictions[BASELINE], usual_rate, y, table.fold.values)
-                    line += f'  vs logistic {skill(p, usual_rate, y) - baseline_skill:+.1%} ({low:+.1%} to {high:+.1%})'
+                    line += f'  vs logistic {skill - baseline_skill:+.1%} ({low:+.1%} to {high:+.1%})'
                 print(line, flush=True)
 
 

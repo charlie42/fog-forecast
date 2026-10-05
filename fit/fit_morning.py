@@ -6,62 +6,67 @@ under 1 km, in 2 or more of the clock hours 04 to 09. The test leaves out one mo
 import numpy as np
 
 import common
-from common import MORNING_INPUTS, logistic, logit, raw_weights, skill, skill_range, calibration
+from common import (MORNING_INPUTS, bootstrap_skill_range, brier_skill_score, format_calibration, logit,
+                    make_logistic, to_raw_weights)
 
-LOW = 0.005   # usual rates are kept between 0.5% and 99.5% before the log-odds
+RATE_FLOOR = 0.005   # usual rates are kept between 0.5% and 99.5% before the log-odds
 
 
-def usual_rates(table, target, rows):
+def compute_usual_rates(table, target, rows):
     """The usual rate of each city, from the mornings in `rows`."""
     return table.city.map(table[rows].groupby('city')[target].mean())
 
 
-def inputs(table, rate):
-    x = table[MORNING_INPUTS].copy()
-    x['usual'] = logit(rate.values, LOW)
-    return x
+def build_features(table, rate):
+    X = table[MORNING_INPUTS].copy()
+    X['usual'] = logit(rate.values, RATE_FLOOR)
+    return X
 
 
-def held_out_month(table, target):
+def predict_held_out_months(table, target):
     """Chance for every morning from a fit on the other months, and the usual rate from those months."""
     y = table[target].astype(float)
     chance = np.zeros(len(table))
     usual = np.zeros(len(table))
     for month in sorted(table.fold.unique()):
-        test = (table.fold == month).values
-        rate = usual_rates(table, target, ~test)
-        model = logistic().fit(inputs(table, rate)[~test], y[~test])
-        chance[test] = model.predict_proba(inputs(table, rate)[test])[:, 1]
-        usual[test] = rate[test]
+        test_mask = (table.fold == month).values
+        rate = compute_usual_rates(table, target, ~test_mask)
+        model = make_logistic().fit(build_features(table, rate)[~test_mask], y[~test_mask])
+        chance[test_mask] = model.predict_proba(build_features(table, rate)[test_mask])[:, 1]
+        usual[test_mask] = rate[test_mask]
     return chance, usual
 
 
 def report_test(table, target, name):
     y = table[target].values.astype(float)
-    p, usual = held_out_month(table, target)
-    low, high = skill_range(p, usual, y, table.fold.values)
+    p, usual = predict_held_out_months(table, target)
+    low, high = bootstrap_skill_range(p, usual, y, table.fold.values)
     print(f'\n{name}: skill over the usual rate, each month predicted from the others: '
-          f'{skill(p, usual, y):.0%} (90% range {low:.0%} to {high:.0%})')
-    print('  said -> happened: ' + calibration(p, y))
-    for cut, label in ((.3, 'given 30% or more'), (.5, 'given 50% or more')):
-        k = p >= cut
-        print(f'  {label}: {k.sum()} mornings, came on {y[k].mean():.0%}, said {p[k].mean():.0%}, '
-              f'{y[k].sum() / y.sum():.0%} of all')
-    k = p < .05
-    print(f'  given under 5%: {k.sum()} mornings, came on {y[k].mean():.1%}')
+          f'{brier_skill_score(p, usual, y):.0%} (90% range {low:.0%} to {high:.0%})')
+    print('  said -> happened: ' + format_calibration(p, y))
+    for threshold, label in ((.3, 'given 30% or more'), (.5, 'given 50% or more')):
+        mask = p >= threshold
+        print(f'  {label}: {mask.sum()} mornings, came on {y[mask].mean():.0%}, said {p[mask].mean():.0%}, '
+              f'{y[mask].sum() / y.sum():.0%} of all')
+    mask = p < .05
+    print(f'  given under 5%: {mask.sum()} mornings, came on {y[mask].mean():.1%}')
 
 
 def fit_all(table, target):
     """The formula fitted on every morning: six inputs, usual rate (log-odds), constant."""
-    rate = usual_rates(table, target, slice(None))
-    return logistic().fit(inputs(table, rate), table[target].astype(float))
+    rate = compute_usual_rates(table, target, slice(None))
+    return make_logistic().fit(build_features(table, rate), table[target].astype(float))
 
 
-if __name__ == '__main__':
+def main():
     table, _, _ = common.load_europe()
     print(f"{len(table)} mornings at {table.city.nunique()} airports, "
           f"{int(table.mist.sum())} with mist and {int(table.fog.sum())} with fog")
     report_test(table, 'mist', 'MIST')
     report_test(table, 'fog', 'FOG')
-    print('\nMIST_MORNING =', raw_weights(fit_all(table, 'mist')))
-    print('FOG_MORNING  =', raw_weights(fit_all(table, 'fog')))
+    print('\nMIST_MORNING =', to_raw_weights(fit_all(table, 'mist')))
+    print('FOG_MORNING  =', to_raw_weights(fit_all(table, 'fog')))
+
+
+if __name__ == '__main__':
+    main()

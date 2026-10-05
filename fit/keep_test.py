@@ -23,7 +23,7 @@ import numpy as np
 
 import common
 import fit_morning
-from common import MORNING_INPUTS, WINTER, logit, skill, skill_range
+from common import MORNING_INPUTS, WINTER, logit, brier_skill_score, bootstrap_skill_range
 
 SUMMER = (4, 5, 6, 7, 8, 9)    # for the southern cities
 GROUPS = {
@@ -82,49 +82,52 @@ def load_group(model, months, stations, near_saturation=False, german_weather_se
     reports, forecasts, rows = {}, {}, []
     for station, city, tz in stations:
         if german_weather_service:
-            reports[city] = common.dwd_reports(station, tz, '2024-01-19', '2026-10-04')
+            reports[city] = common.load_dwd_reports(station, tz, '2024-01-19', '2026-10-04')
         else:
-            reports[city] = common.airport_reports(station, tz, '2024-01-19', '2026-10-04', near_saturation)
-        forecasts[city] = common.forecast(f'fcs_{station}_{model}.json', reports[city].lat.iloc[0],
-                                          reports[city].lon.iloc[0], tz, model, '2026-10-03')
-        labels = common.morning_labels(reports[city], ['mist', 'fog'])
-        rows.append(common.morning_table(city, labels, forecasts[city], months))
+            reports[city] = common.load_airport_reports(station, tz, '2024-01-19', '2026-10-04', near_saturation)
+        forecasts[city] = common.load_forecast(f'fcs_{station}_{model}.json', reports[city].lat.iloc[0],
+                                               reports[city].lon.iloc[0], tz, model, '2026-10-03')
+        labels = common.label_mornings(reports[city], ['mist', 'fog'])
+        rows.append(common.build_morning_table(city, labels, forecasts[city], months))
     return common.finish_table(rows), reports, forecasts
 
 
-def test_city(t, formula, target):
+def test_city(table, formula, target):
     """Chance from the page's formula with the city's usual rate from its other months; skill and range."""
-    y = t[target].values.astype(float)
-    chance = np.zeros(len(t))
-    usual = np.zeros(len(t))
-    for month in t.fold.unique():
-        test = (t.fold == month).values
-        rate = t[~test][target].mean()
-        x = t[MORNING_INPUTS].copy()
-        x['usual'] = logit(rate, fit_morning.LOW)
-        chance[test] = formula.predict_proba(x[test])[:, 1]
-        usual[test] = rate
-    low, high = skill_range(chance, usual, y, t.fold.values) if y.sum() >= 3 else (np.nan, np.nan)
-    return dict(n=int(y.sum()), skill=skill(chance, usual, y), low=low, high=high, said=chance.mean(), rate=y.mean())
+    y = table[target].values.astype(float)
+    chance = np.zeros(len(table))
+    usual = np.zeros(len(table))
+    for month in table.fold.unique():
+        test_mask = (table.fold == month).values
+        rate = table[~test_mask][target].mean()
+        X = table[MORNING_INPUTS].copy()
+        X['usual'] = logit(rate, fit_morning.RATE_FLOOR)
+        chance[test_mask] = formula.predict_proba(X[test_mask])[:, 1]
+        usual[test_mask] = rate
+    low, high = bootstrap_skill_range(chance, usual, y, table.fold.values) if y.sum() >= 3 else (np.nan, np.nan)
+    return dict(n=int(y.sum()), skill=brier_skill_score(chance, usual, y), low=low, high=high,
+                said=chance.mean(), rate=y.mean())
 
 
-def entry(station, city, tz, model, reports, t, hours):
+def build_city_entry(station, city, tz, model, reports, table, hours):
     """Entry for the city list: usual morning rates and usual rate per hour, floored at 0.3%.
 
     `lat` and `lon` are the centre of the city, which the page asks the weather forecast for. They are left empty
     here and filled in by hand. The station the reports come from goes into `stationLat` and `stationLon`."""
-    r3 = lambda x: float(f'{max(x, .003):.3f}')
-    e = dict(name=city, site=f'{station} airport', lat=None, lon=None, stationLat=round(float(reports.lat.iloc[0]), 4),
-             stationLon=round(float(reports.lon.iloc[0]), 4), tz=tz)
+    def round_rate(rate):
+        return float(f'{max(rate, .003):.3f}')
+
+    entry = dict(name=city, site=f'{station} airport', lat=None, lon=None,
+                 stationLat=round(float(reports.lat.iloc[0]), 4), stationLon=round(float(reports.lon.iloc[0]), 4), tz=tz)
     if model != 'icon_eu':
-        e['model'] = model
-    e.update(mist=r3(t.mist.mean()), fog=r3(t.fog.mean()))
-    e['mistByHour'] = [r3(v) for v in hours['mist'].groupby(hours['mist'].h).flag.mean()]
-    e['fogByHour'] = [r3(v) for v in hours['fog'].groupby(hours['fog'].h).flag.mean()]
-    return e
+        entry['model'] = model
+    entry.update(mist=round_rate(table.mist.mean()), fog=round_rate(table.fog.mean()))
+    entry['mistByHour'] = [round_rate(v) for v in hours['mist'].groupby(hours['mist'].h).flag.mean()]
+    entry['fogByHour'] = [round_rate(v) for v in hours['fog'].groupby(hours['fog'].h).flag.mean()]
+    return entry
 
 
-if __name__ == '__main__':
+def main():
     europe, _, _ = common.load_europe()
     formulas = {target: fit_morning.fit_all(europe, target) for target in ('mist', 'fog')}
     for group in sys.argv[1:] or GROUPS:
@@ -136,11 +139,12 @@ if __name__ == '__main__':
               f'{"90% range":>12s} | said / happened fog | keep?')
         results = {}
         for city in table.city.unique():
-            t = table[table.city == city]
-            mist, fog = (test_city(t, formulas[target], target) for target in ('mist', 'fog'))
+            city_table = table[table.city == city]
+            mist, fog = (test_city(city_table, formulas[target], target) for target in ('mist', 'fog'))
             keep = fog['skill'] >= .1 and fog['low'] > 0 and fog['n'] >= 15
-            results[city] = (t, keep)
-            print(f'{city:22s}{len(t):9d} | {mist["n"]:5d} {mist["skill"]:6.0%} {mist["low"]:5.0%} to {mist["high"]:4.0%} | '
+            results[city] = (city_table, keep)
+            print(f'{city:22s}{len(city_table):9d} | '
+                  f'{mist["n"]:5d} {mist["skill"]:6.0%} {mist["low"]:5.0%} to {mist["high"]:4.0%} | '
                   f'{fog["n"]:5d} {fog["skill"]:6.0%} {fog["low"]:5.0%} to {fog["high"]:4.0%} | '
                   f'{fog["said"]:5.1%} / {fog["rate"]:5.1%}    | {"KEEP" if keep else "drop"}')
         if group in GERMAN_WEATHER_SERVICE:
@@ -148,6 +152,12 @@ if __name__ == '__main__':
         print('\nEntries for the city list:')
         for station, city, tz in stations:
             if city in results and results[city][1]:
-                t = results[city][0]
-                hours = {flag: common.hour_table(t, {city: reports[city]}, forecasts, flag) for flag in ('mist', 'fog')}
-                print('  ' + json.dumps(entry(station, city, tz, model, reports[city], t, hours)) + ',')
+                city_table = results[city][0]
+                hours = {flag: common.build_hour_table(city_table, {city: reports[city]}, forecasts, flag)
+                         for flag in ('mist', 'fog')}
+                entry = build_city_entry(station, city, tz, model, reports[city], city_table, hours)
+                print('  ' + json.dumps(entry) + ',')
+
+
+if __name__ == '__main__':
+    main()
