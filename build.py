@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds the site into _site/: a page per city and language, the lists of cities, two pages of text, a sitemap, and the scripts, stylesheet and fonts from src/."""
+"""Builds the site into _site/: a page per city and language, the lists of cities, three pages of text, a sitemap, and the scripts, stylesheet and fonts from src/."""
 import json
 import shutil
 from pathlib import Path
@@ -12,6 +12,7 @@ SITE_URL = 'https://chanceoffog.com/'   # used for canonical links and the sitem
 STATIC = ['style.css', 'model.js', 'page.js', 'google7870e9be589df912.html']   # the last one proves ownership to Google Search Console
 ARTICLE = 'how-to-predict-fog'
 ACCURACY = 'accuracy'
+MIST = 'mist-vs-fog'   # its pictures are in src/ in a folder of the same name
 ICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%2335434d'/%3E"
         "%3Cpath d='M3 5h10M3 8h10M3 11h6' stroke='%23fff' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")
 # English has a page for every city. Another language has one for each city that carries its code in cities.json,
@@ -154,6 +155,11 @@ def main():
     (OUT / ACCURACY / 'index.html').write_text(
         template(ACCURACY, 'en').substitute(url=SITE_URL + ACCURACY + '/', icon=ICON), encoding='utf-8')
     urls.append(SITE_URL + ACCURACY + '/')
+
+    shutil.copytree(SRC / MIST, OUT / MIST)   # the pictures and their credits
+    (OUT / MIST / 'index.html').write_text(
+        template(MIST, 'en').substitute(url=SITE_URL + MIST + '/', icon=ICON), encoding='utf-8')
+    urls.append(SITE_URL + MIST + '/')
 
     (OUT / 'sitemap.xml').write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mist vs fog: the difference, and a forecast for both</title>
+<meta name="description" content="Fog is visibility under 1 km, mist from 1 to 5 km. With pictures of both, how often each happens, what a fog forecast shows on a misty morning, and a photo game.">
+<meta property="og:title" content="Mist vs fog">
+<meta property="og:description" content="Fog is visibility under 1 km, mist from 1 to 5 km. With pictures of both, how often each happens, what a fog forecast shows on a misty morning, and a photo game.">
+<link rel="canonical" href="$url">
+<link rel="icon" href="$icon">
+<link rel="stylesheet" href="../style.css">
+<style>
+.compare { margin: 1em 0 .6em; }
+.compare img { display: block; width: 100%; height: auto; }
+.credit { font-size: .85em; color: var(--muted); }
+.guess { margin: 1.6em 0; }
+.guess img { display: block; width: 100%; height: auto; }
+.guess.ask img { aspect-ratio: var(--photo); object-fit: cover; object-position: top; }
+.guess p { margin: .4em 0 0; }
+.choice { display: flex; gap: .5em; }
+#score.final { margin: 1.2em 0 0; font-size: 1.5em; font-weight: bold; text-align: center; }
+#score.final + p { margin: .2em 0 2em; text-align: center; }
+.choice button { flex: 1; font: inherit; font-weight: bold; padding: .45em 0; color: var(--ink); background: var(--paper); border: 1px solid var(--ink); border-radius: 4px; cursor: pointer; }
+.choice button:hover, .choice button:focus-visible { color: var(--paper); background: var(--ink); outline: none; }
+</style>
+</head>
+<body>
+<main>
+<article>
+<h1>Mist vs fog</h1>
+<p>Want to test your skill before learning the difference? <a href="#game">Mist or fog?</a> is a game with photos, at the end of the page.</p>
+
+<h2>The difference between mist and fog</h2>
+<p>Both are small water drops in the air near the ground. The name depends on how far one can see: under 1 km it is fog, from 1 to 5 km it is mist. In fog the other side of the street is gone. In mist the trees across a field are still there, paler with each row.</p>
+
+<figure class="compare"><img src="mist-vs-fog.webp" width="1208" height="1152" alt="Mist vs fog in three pictures. Fog: red deer in a field, nothing visible behind them. Still fog: fir trees in a meadow, the farthest a few hundred metres away and almost gone. Mist: a valley with hills a few kilometres away, pale but visible."></figure>
+<p>Much of what is called mist is fog by this measure. In the second picture the last trees one can make out are a few hundred metres away, so the visibility is under 1 km. In the third the hills are a few kilometres away and still there.</p>
+<p class="credit">Photos, cropped: <a href="https://commons.wikimedia.org/wiki/File:Red_Deer_in_the_fog_-_geograph.org.uk_-_4873029.jpg">Hugh Venables</a> and <a href="https://commons.wikimedia.org/wiki/File:String_Road_in_the_mist_-_geograph.org.uk_-_5946635.jpg">James Allan</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a>; <a href="https://commons.wikimedia.org/wiki/File:Mist_Covering_a_Meadow_under_Forest_Encroachment.jpg">Wing-Chi Poon</a>, <a href="https://creativecommons.org/licenses/by-sa/2.5">CC BY-SA 2.5</a>.</p>
+
+<h2>How often there is mist without fog</h2>
+<p>More often than fog. Airports measure visibility, so they can give us the numbers. At 14 European airports, mist without fog was measured on one morning in ten from October to March, and fog on one in thirteen. At Milan's airport it was almost one morning in four, in Berlin one in eight.</p>
+
+<h2>What a fog forecast shows on a misty morning</h2>
+<p>Weather apps show fog as yes or no, or as a percentage. There is nothing like that for mist, so before a misty morning the fog forecast is all there is to look at.</p>
+<p>It is easy to think that a fog forecast is about fog only. It is not that strict. Since January 2024 there were 623 mornings with mist but no fog, and the fog forecast of the ICON weather model, made a day ahead, said "fog" on 45% of them. On mornings with real fog it said so on 74%, and on mornings with neither on 10%.</p>
+<p>So a fog forecast does pick up mist, but only half of it. Whether a given misty morning is in the forecast is close to a coin toss.</p>
+
+<h2>A forecast with a number for mist</h2>
+<p>This site, Chance of Fog, gives a number for mist as well as for fog. On its <a href="../">forecast</a> pages each morning has two numbers, a chance for mist and a chance for fog, and so has each hour from 3 to 11 h. On a morning given "mist 40%, fog 5%", fog is unlikely and there is mist two times in five.</p>
+
+<p>Here is a comparison of the mist chance in the forecast and how often mist actually happened.</p>
+
+<table>
+<tr><th>Mornings</th><th>Mist chance the forecast gave</th><th>Mist happened</th></tr>
+<tr><td>2,580</td><td>about 2%</td><td>2%</td></tr>
+<tr><td>1,255</td><td>about 9%</td><td>9%</td></tr>
+<tr><td>922</td><td>about 22%</td><td>23%</td></tr>
+<tr><td>643</td><td>about 39%</td><td>40%</td></tr>
+<tr><td>456</td><td>about 60%</td><td>57%</td></tr>
+<tr><td>259</td><td>about 77%</td><td>78%</td></tr>
+</table>
+
+<p>The table covers 6,115 mornings from October to March since January 2024, at the 14 airports, with the forecast made the day before. The same check for fog is on the <a href="../accuracy/">accuracy</a> page.</p>
+
+<p>In Delhi, Lahore and Amritsar smog alone often keeps the visibility under 5 km, so the measurements cannot tell mist from smog. These three cities have a chance for fog only.</p>
+
+<h2 id="game">Mist or fog?</h2>
+<p>Time to test your skill. Is it mist or fog in each of these photos? Pick one to see the answer.</p>
+
+<figure class="guess" data-is="mist" style="--photo: 800/602">
+<img src="mist-field-mardyke-valley.webp" width="800" height="722" loading="lazy" alt="Mist: a field on a sunny morning, the trees at its far end pale but visible">
+<p class="answer">The trees at the far end of the field are pale but still visible.</p>
+<p class="credit">Photo: <a href="https://commons.wikimedia.org/wiki/File:Morning_Mist_in_Mardyke_Valley_-_geograph.org.uk_-_39177.jpg">Glyn Baker</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a></p>
+</figure>
+<figure class="guess" data-is="fog" style="--photo: 800/600">
+<img src="fog-heath-ideford-common.webp" width="800" height="720" loading="lazy" alt="Fog: a track on a heath with two pines, the trees behind them faint">
+<p class="answer">The trees behind the two pines, perhaps 200 m away, are faint, and the track is gone a little further on.</p>
+<p class="credit">Photo: <a href="https://commons.wikimedia.org/wiki/File:Mist,_Ideford_Common_-_geograph.org.uk_-_7982233.jpg">Derek Harper</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a></p>
+</figure>
+<figure class="guess" data-is="mist" style="--photo: 800/534">
+<img src="mist-valley-rosedale.webp" width="800" height="654" loading="lazy" alt="Mist: a green valley seen from a hill road, its far side pale but visible">
+<p class="answer">The far side of the valley, a few kilometres away, is pale but visible.</p>
+<p class="credit">Photo: <a href="https://commons.wikimedia.org/wiki/File:Rosedale_Chimney_Bank_and_Seven_valley_in_mist_-_geograph.org.uk_-_4566116.jpg">David Smith</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a></p>
+</figure>
+<figure class="guess" data-is="fog" style="--photo: 800/533">
+<img src="fog-ruin-norton-tower.webp" width="800" height="653" loading="lazy" alt="Fog: a ruined tower on a hill behind bare trees, faint at about 200 metres">
+<p class="answer">The ruin is about 200 m away and already faint.</p>
+<p class="credit">Photo: <a href="https://commons.wikimedia.org/wiki/File:Norton_Tower_in_Mist_(3)_-_geograph.org.uk_-_6376316.jpg">Chris Heaton</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a></p>
+</figure>
+<figure class="guess" data-is="fog" style="--photo: 800/600">
+<img src="fog-street-wetherby.webp" width="800" height="720" loading="lazy" alt="Fog: a street of stone houses, the houses at its end almost gone">
+<p class="answer">The houses at the end of the street, about 150 m away, are almost gone.</p>
+<p class="credit">Photo: <a href="https://commons.wikimedia.org/wiki/File:Church_Street,_Wetherby_in_the_mist_(8th_November_2020).jpg">Mtaylor848</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></p>
+</figure>
+<figure class="guess" data-is="mist" style="--photo: 800/600">
+<img src="mist-mountain-valley.webp" width="800" height="720" loading="lazy" alt="Mist: a mountain valley with a path, the far ridges pale but visible">
+<p class="answer">The far ridges are several kilometres away and visible.</p>
+<p class="credit">Photo: <a href="https://commons.wikimedia.org/wiki/File:A_light_mist_in_the_valley_-_geograph.org.uk_-_2531995.jpg">Row17</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a></p>
+</figure>
+<figure class="guess" data-is="fog" style="--photo: 800/533">
+<img src="fog-hillside-rowden-farm.webp" width="800" height="653" loading="lazy" alt="Fog: a grass slope above a field, a tree in the field pale at about 100 metres">
+<p class="answer">The tree in the field, about 100 m away, is already pale, and the far side of the field is gone.</p>
+<p class="credit">Photo: <a href="https://commons.wikimedia.org/wiki/File:Mist_near_Rowden_Farm_-_geograph.org.uk_-_5555671.jpg">Derek Harper</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a></p>
+</figure>
+<figure class="guess" data-is="mist" style="--photo: 800/600">
+<img src="mist-road-ifron-valley.webp" width="800" height="720" loading="lazy" alt="Mist: a road in a valley, the hills at its end visible">
+<p class="answer">The hills at the end of the valley, a kilometre or two away, are visible.</p>
+<p class="credit">Photo: <a href="https://commons.wikimedia.org/wiki/File:Ifron_valley_in_the_mist_-_geograph.org.uk_-_2422681.jpg">Row17</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0">CC BY-SA 2.0</a></p>
+</figure>
+<p id="score"></p>
+<p id="end">All of these photos are called mist in their titles. Only half of them are actual mist. The chance of mist and of fog for tomorrow morning is on the <a href="../">forecast</a> pages.<br>Refresh the page to try again.</p>
+<script>
+// Each picture has its answer written under the photo. The answer is cut off until a guess is made.
+(function () {
+  var figs = document.querySelectorAll('.guess'), score = document.getElementById('score'), end = document.getElementById('end'), right = 0, done = 0;
+  end.hidden = true;
+  figs.forEach(function (fig) {
+    var answer = fig.querySelector('.answer'), row = document.createElement('p');
+    row.className = 'choice';
+    fig.classList.add('ask');
+    answer.hidden = true;
+    ['Mist', 'Fog'].forEach(function (name) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = name;
+      b.onclick = function () {
+        var ok = name.toLowerCase() === fig.dataset.is;
+        done++;
+        if (ok) right++;
+        answer.textContent = (ok ? 'Right. ' : 'Wrong. ') + answer.textContent;
+        answer.hidden = false;
+        fig.classList.remove('ask');
+        row.remove();
+        score.textContent = right + ' of ' + done + ' right' + (done < figs.length ? ' so far.' : '.');
+        if (done === figs.length) {
+          score.className = 'final';
+          score.innerHTML = '<span aria-hidden="true">\u2726</span> ' + right + ' of ' + done + ' right <span aria-hidden="true">\u2726</span>';
+          end.hidden = false;
+          // A jump follows the glide in case the glide was cut short.
+          end.scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+          setTimeout(function () { end.scrollIntoView({ block: 'nearest' }); }, 800);
+        }
+      };
+      row.appendChild(b);
+    });
+    fig.insertBefore(row, answer);
+  });
+})();
+</script>
+</article>
+</main>
+<footer><small>Contact: <a href="mailto:mist@chanceoffog.com">mist@chanceoffog.com</a></small></footer>
+</body>
+</html>
