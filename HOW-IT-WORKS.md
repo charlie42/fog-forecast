@@ -11,7 +11,7 @@ The page asks [Open-Meteo](https://open-meteo.com/) for the ICON-EU forecast at 
 - how far the evening air is from saturation (temperature minus dew point)
 - how much it cools overnight
 
-A logistic regression turns those, plus how often the site usually has fog, into a chance. There are four sets of weights: fog and mist, each for a whole morning and for a single hour. Fog means visibility under 1 km and mist under 5 km, in air close to saturation: the temperature reported by the airport is within 2 °C of the dew point. Smoke, haze and dry smog are left out that way. A morning counts when that lasts at least two hours between 4 and 10 h.
+A logistic regression turns those, plus how often the site usually has fog, into a chance. There are four sets of weights: fog and mist, each for a whole morning and for a single hour. Fog means visibility under 1 km and mist under 5 km, in air close to saturation: the temperature reported by the airport is within 2 °C of the dew point. Smoke, haze and dry smog are left out that way. A report with rain, snow, drizzle or other precipitation is not counted as mist or fog. A morning counts when mist or fog is reported in at least two of the six hours from 4 to 10 h.
 
 The weights were fitted once on 14 European airports together. A new place needs its usual fog and mist rates from its own visibility record, and one correction for each.
 
@@ -56,7 +56,7 @@ Where it is weak:
 
 - Ranking mornings, it ties with the fog code in ICON's own output. At the same 1,137 alarms the fog code caught 622 mist mornings and the formula 628. What the formula adds is a percentage.
 - Fog skill differs by city: Prague 35%, Vienna 34%, Milan 31%, down to London Heathrow 8%, Madrid 7% and Frankfurt −1%. See "Which cities are shown".
-- The page uses the day-ahead weights for mornings up to four days out. Mist skill falls from 29% at one day to 26, 22 and 18% at two, three and four days. Among mornings given 40% or more for mist, mist came on 60% at one day ahead and on 51% at four days.
+- The page uses the day-ahead weights for mornings up to four days out. Mist skill falls from 29% at one day to 26, 22 and 18% at two, three and four days. Among mornings given 40% or more for mist, mist came on 60% at one day ahead and on 51% at four days. Fog skill falls from 24% to 21, 17 and 13%. Among mornings given 30% or more for fog, fog came on 45% at one day ahead and on 35% at four days.
 - Within a morning, the hourly formula ranks a misty hour above a clear one 70% of the time. The site's usual daily pattern alone manages 65%.
 - An airport is one point, often outside the city. Heathrow has mist on 7% of mornings, Stansted and Luton on 27%.
 - The forecast archive holds two and a half winters, and the inputs and time windows were chosen while looking at the same data.
@@ -106,7 +106,7 @@ Things to know about some of these:
 - Stockholm, Sacramento and Seattle are shown at an airport nearer the centre than the one first tested: Bromma (11 km from the centre) in place of Arlanda (34 km), Sacramento Executive (8 km) in place of Sacramento International (15 km), and Boeing Field (9 km) in place of Seattle-Tacoma (18 km). Fog skill is the same within a point or two at both airports of each pair, and fog is rarer nearer the city: 21 fog mornings at Bromma against 35 at Arlanda, 19 at Boeing Field against 34 at Seattle-Tacoma, 51 at Sacramento Executive against 63 at Sacramento International.
 - Seattle's fog skill rests on 19 fog mornings, so its range is wide (7 to 46%).
 - At Galveston and Houston the fog number is still low after the correction (Houston: 5% on average, fog came on 8% of mornings). It still ranks the mornings.
-- Bologna passes narrowly (range 1 to 25%).
+- Bologna and Bakersfield pass narrowly (ranges 1 to 25% and 1 to 33%).
 
 Tested and left out:
 
@@ -124,6 +124,8 @@ Lahore and Amritsar were tested the same way, each left out of the fit:
 | Delhi | 115 | 43% (23 to 59) | 18% (−4 to 34) | 34% | 26% |
 | Lahore | 80 | 43% (32 to 54) | 31% (23 to 37) | 22% | 18% |
 | Amritsar | 190 | 40% (31 to 49) | 22% (15 to 30) | 38% | 46% |
+
+Fog on the plain comes in runs of days: after a fog morning, the next morning had fog 76% of the time at Delhi, 71% at Lahore and 78% at Amritsar. Against a baseline of the rate for the month and whether the morning before had fog, the skill is −15% (−51 to 12) at Delhi, 3% (−11 to 18) at Lahore and 2% (−12 to 16) at Amritsar. For the next morning the forecast there is no better than that baseline. In Europe the skill over the same kind of baseline is 21%.
 
 Lahore reads a little high: mornings given about 80% had fog 74% of the time, and in February it said 19% and fog came on 8%. Amritsar reads low: mornings given about 60% had fog 74% of the time.
 
