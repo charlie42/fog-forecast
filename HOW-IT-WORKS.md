@@ -19,7 +19,9 @@ At some places the average is off: at Houston the weights give 3% for fog where 
 
 Delhi, Lahore and Amritsar are the exception. The European weights rank Delhi's mornings correctly but say a third of the fog that happens, so these three have fog weights of their own, fitted on 13 airports on the plain of the Indus and Ganges. Fog there is tied to the season far more than in Europe (Delhi: 3% of October mornings, 73% in January), so the usual rate that goes in is the one for the calendar month, from the last five years of airport reports. There is no mist number for these three: smog keeps visibility under 5 km on almost every winter morning, humid or not.
 
-The humidity condition matters in few places. Of Delhi's 136 mornings with visibility under 1 km in the test, 21 are not counted as fog (13 of them in November), nor are 21 of Lahore's 101 (14 of them in October and November) and 2 of Amritsar's 192. Reports of smoke or haze there are mostly 4 °C or more from saturation. At Fresno and Bakersfield 7 mist mornings each were dry haze. At the other 28 airports checked, the condition changes no fog morning and at most one mist morning, so the weights fitted on visibility alone were kept. Winter fog on the plain of the Indus and Ganges forms in polluted air, so a fog morning there is not a morning of clean air. Only the mornings without the humidity that fog needs are left out.
+Fog there also comes in runs of days. So for these three, one more input goes in: whether an earlier morning was a fog morning at the airport. It is counted from the airport's reports each time the site is built, by the same rule as in the fit. Each row of the page takes the newest known of the four mornings before it, and each of the four has weights of its own. Without reports, the weights without this input are used.
+
+The humidity condition matters in few places. Of Delhi's 136 mornings with visibility under 1 km in the test, 21 are not counted as fog (13 of them in November), nor are 21 of Lahore's 101 (14 of them in October and November) and 2 of Amritsar's 192. Reports of smoke or haze there are mostly 4 °C or more from saturation. At Fresno and Bakersfield 7 mist mornings each were dry haze. At the other 28 airports checked, the condition changes no fog morning and at most one mist morning, so the weights fitted on visibility alone were kept. Winter fog on the plain of the Indus and Ganges forms in polluted air, so a fog morning there is not a morning of clean air. Only the mornings without the humidity that fog needs are left out. The codes that observers write in the reports (fog, mist, haze, smoke) were tried in place of the humidity condition and not used, because they are used differently from country to country. At Lahore, 694 of the 5,006 reports since 2019 under 1 km and within 2 °C of saturation are coded as mist, not fog. At Delhi, 916 of the 7,352 coded as fog are 3 °C or more from saturation.
 
 ## How well it works
 
@@ -52,7 +54,7 @@ Fog came on 7.5% of all mornings. The mornings given 30% or more (529, or 9% of 
 
 These figures are for the 14 airports the weights were fitted on, with the tested month left out. Five of them are not on the site: Frankfurt, London Heathrow, Madrid and Warsaw, and Stockholm Arlanda, since Stockholm is now shown at Bromma. These figures are before the correction per city.
 
-Where it is weak:
+Limitations:
 
 - Ranking mornings, it ties with the fog code in ICON's own output. At the same 1,137 alarms the fog code caught 622 mist mornings and the formula 628. What the formula adds is a percentage.
 - Fog skill differs by city: Prague 35%, Vienna 34%, Milan 31%, down to London Heathrow 8%, Madrid 7% and Frankfurt −1%. See "Which cities are shown".
@@ -125,7 +127,21 @@ Lahore and Amritsar were tested the same way, each left out of the fit:
 | Lahore | 80 | 43% (32 to 54) | 31% (23 to 37) | 22% | 18% |
 | Amritsar | 190 | 40% (31 to 49) | 22% (15 to 30) | 38% | 46% |
 
-Fog on the plain comes in runs of days: after a fog morning, the next morning had fog 76% of the time at Delhi, 71% at Lahore and 78% at Amritsar. Against a baseline of the rate for the month and whether the morning before had fog, the skill is −15% (−51 to 12) at Delhi, 3% (−11 to 18) at Lahore and 2% (−12 to 16) at Amritsar. For the next morning the forecast there is no better than that baseline. In Europe the skill over the same kind of baseline is 21%.
+Fog on the plain comes in runs of days: after a fog morning, the next morning had fog 76% of the time at Delhi, 71% at Lahore and 78% at Amritsar. The figures above are for the weights without an earlier morning. The same test with it as an input, fog skill over the rate for the month:
+
+| | Without | 1 before | 2 before | 3 before | 4 before |
+|---|---|---|---|---|---|
+| Delhi | 18% (−4 to 34) | 37% (21 to 47) | 31% (13 to 44) | 26% (6 to 41) | 22% (1 to 37) |
+| Lahore | 31% (23 to 37) | 42% (31 to 49) | 37% (27 to 44) | 34% (23 to 43) | 31% (22 to 38) |
+| Amritsar | 22% (15 to 30) | 34% (26 to 40) | 31% (23 to 38) | 27% (21 to 34) | 25% (16 to 33) |
+
+Every column was measured with the weather forecast of the day before. The later rows of a page go with an older forecast, so they will be lower there.
+
+Against a baseline of the rate for the month and whether the morning before had fog, the skill without the input is −17% (−55 to 10) at Delhi, 0% (−13 to 14) at Lahore and −1% (−14 to 13) at Amritsar. With one morning before it is 10% (−8 to 24), 17% (12 to 21) and 14% (8 to 20). In Europe the skill over the same kind of baseline is 21%.
+
+The mornings where a run starts or ends are told apart as well as without the input, but the chance on them is further off: the first fog morning after a clear one was given 35% on average, against 50% without, and the first clear morning after fog 58% against 41%. These are 178 of the 1,261 mornings.
+
+With one morning before, mornings given about 60% had fog 43% of the time at Delhi, 58% at Lahore and 80% at Amritsar. Those given about 85% had it 88%, 80% and 87% of the time.
 
 Lahore reads a little high: mornings given about 80% had fog 74% of the time, and in February it said 19% and fog came on 8%. Amritsar reads low: mornings given about 60% had fog 74% of the time.
 
