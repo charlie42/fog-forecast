@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.second_try.outputs.page_url }}
     steps:
       # GitHub switches a schedule off after 60 days without a commit. Enabling the workflow again counts as activity.
       - run: gh workflow enable deploy.yml
@@ -36,5 +36,13 @@ jobs:
       - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
+      # A new upload can be missing from GitHub's list for a moment, and deploy-pages fails if it looks then
+      # (actions/deploy-pages#451). On a failure, wait and try once more.
       - id: deployment
+        uses: actions/deploy-pages@v5
+        continue-on-error: true
+      - if: steps.deployment.outcome == 'failure'
+        run: sleep 30
+      - id: second_try
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v5
